@@ -67,10 +67,14 @@ isOauthDataInit o = foldr (\ f b -> (not . BS.null $ f o) && b) True [ oauthClie
 
 -- | Login via OAuth. Redirect user for authorization.
 -- 
-loginWithOauth :: HasOauth b => Handler b b ()
-loginWithOauth = do
+loginWithOauth :: HasOauth b 
+               => Maybe BS.ByteString  -- ^ Maybe extra query parameters
+               -> Handler b b ()
+loginWithOauth param = do
     oauthSnaplet <- getOauthSnaplet
-    redirect $ authorizationUrl $ getOauth oauthSnaplet
+    redirect $ (authorizationUrl $ getOauth oauthSnaplet) `BS.append` extraP param
+    where extraP (Just x) = "&" `BS.append` x
+          extraP Nothing  = ""
 
 
 -- | Callback for oauth provider.
