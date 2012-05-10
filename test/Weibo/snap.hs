@@ -17,8 +17,10 @@ import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy as LBS
 import           Data.Maybe (fromMaybe, fromJust)
 import qualified Data.Text as T
+import qualified Data.Text.Encoding as T
 import           Network.HTTP.Conduit (responseBody)
-
+import           Prelude hiding ((.))
+import           Control.Category
 
 #ifdef DEVELOPMENT
 import           Snap.Loader.Devel
@@ -32,6 +34,8 @@ import           System.IO
 import           Snap
 import           Snap.Util.FileServe
 import           Snap.Snaplet.Heist
+import qualified Snap as Snap
+
 
 import Network.OAuth2.OAuth2
 import Network.OAuth2.HTTP.HttpClient
@@ -45,7 +49,7 @@ import Api
 
 data App = App
     { _heist   :: Snaplet (Heist App)
-    , _oauth   :: Snaplet OAuth
+    , _oauth   :: Snaplet OAuthSnaplet
     }
 
 makeLens ''App
@@ -54,8 +58,8 @@ instance HasHeist App where
     heistLens = subSnaplet heist
 
 instance HasOauth App where
-  oauthLens = subSnaplet oauth
-
+   oauthLens' = oauth
+   oauthLens = subSnaplet oauth
 
 type AppHandler = Handler App App
 
@@ -69,27 +73,6 @@ weibooauth = weiboKey { oauthOAuthorizeEndpoint = "https://api.weibo.com/oauth2/
                       }
 
 
---                   -- getting UID. FIXME: res could be error
---                   res <- liftIO $ requestUid accountUidUri token'
---                   liftIO $ print $ BS.unpack $ apiUrlGet2 accountShowUri (token', fromJust res)
---                   res2 <- liftIO $ doSimpleGetRequest . BS.unpack $ apiUrlGet2 accountShowUri (token', fromJust res)
---                   writeLBS $ "user: " `LBS.append` responseBody res2
---    _ -> writeBS "Error getting access token"
-
-
---+    modifySnapletState (setL (oauth . snapletConfig) (Just p))
-
--- modifySnapletState :: (Snaplet v -> Snaplet v) -> Handler b v ()
- --setL :: (Lens a b) -> b -> a -> a
---snapletConfig :: Lens (Snaplet a) SnapletConfig
---snapletValue :: Lens (Snaplet a) a
---  modL :: (Lens a b) -> (b -> b) -> a -> a
-
---modifyOAuthAccessToken :: AccessToken -> Snaplet OAuth -> Snaplet OAuth
---modifyOAuthAccessToken at = 
-
-  
-
 decodedParam :: MonadSnap m => ByteString -> m ByteString
 decodedParam p = fromMaybe "" <$> getParam p
 
@@ -97,16 +80,23 @@ weibo :: Handler App App ()
 weibo = loginWithOauth
 
 weiboCallback :: Handler App App ()
-weiboCallback = oauthCallbackHandler
+weiboCallback = oauthCallbackHandler $ Just "/getUid"
+
+test :: Handler App App ()
+test = do
+  ss <- getOauthSnaplet
+  writeText $ T.pack (show $ getOauth ss)
+
 
 ------------------------------------------------------------------------------
 
 -- | The application's routes.
 routes :: [(ByteString, Handler App App ())]
 routes  = [ ("", with heist heistServe) -- ^ FIXME: maybe no need heist
-          , ("/", writeBS "It works!<a href='/weibo'>test</a>")
+          , ("/", writeBS "It works!<a href='/weibo'>login via weibo</a>")  -- FIXME: parseHTML
           , ("/weibo", weibo)
           , ("/oauthCallback", weiboCallback )
+          , ("/getUid", test)
           ]
 
 -- | The application initializer.
@@ -137,3 +127,37 @@ getActions _ = do
     (msgs, site, cleanup) <- runSnaplet app
     hPutStrLn stderr $ T.unpack msgs
     return (site, cleanup)
+
+
+------------------------------------------------------------------------------
+--                    Working notes                                   --
+------------------------------------------------------------------------------
+
+-- modifySnapletState :: (Snaplet v -> Snaplet v) -> Handler b v ()
+-- getL :: (Lens a b) -> a -> b
+-- setL :: (Lens a b) -> b -> a -> a
+-- modL :: (Lens a b) -> (b -> b) -> a -> a
+-- app :: SnapletInit App App
+-- snapletConfig :: Lens (Snaplet a) SnapletConfig
+-- snapletValue :: Lens (Snaplet a) a
+
+{-
+ getMongoDB :: app -> MongoDB
+ getMongoDB = getL (snapletValue . database)
+
+-- | translate as
+--   MonadState App (Handler App App)
+--   thus: `get` could be used for getting `App` instances inside `Handler b v` monad.
+-- 
+instance MonadState v (Handler b v) where
+    get = getsSnapletState _snapletValue
+    put v = modifySnapletState (setL snapletValue v)
+
+
+--
+with
+withTop
+  at first grance, there have same type signature. 
+  so any differences?? dig into detail but not understand it yet.
+
+-}
