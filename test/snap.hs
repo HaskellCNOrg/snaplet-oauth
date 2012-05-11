@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE CPP             #-}
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE RankNTypes  #-}
+{-# LANGUAGE CPP               #-}
+{-# LANGUAGE TemplateHaskell   #-}
+{-# LANGUAGE RankNTypes        #-}
 
 {-
    templates must follow a kind of scalfold
@@ -29,7 +29,6 @@ import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy as LBS
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
-import qualified Snap as Snap
 
 #ifdef DEVELOPMENT
 import           Snap.Loader.Devel
@@ -42,13 +41,13 @@ import Network.OAuth2.HTTP.HttpClient
 
 import Key
 import Api
+import Utils
 
 ------------------------------------------------------------------------------
 
 data App = App
     { _heist   :: Snaplet (Heist App)
     , _weibo   :: Snaplet OAuthSnaplet
-    , _google  :: Snaplet OAuthSnaplet
     }
 
 makeLens ''App
@@ -58,8 +57,10 @@ instance HasHeist App where
 
 -- | FIXME : how to allow multiple OAuthSnaplets ??
 instance HasOauth App where
-   oauthLens' = google
-   oauthLens = subSnaplet google
+   oauthLens = weibo
+   --oauthLens' = google
+   --oauthLens = subSnaplet google
+   
 
 type AppHandler = Handler App App
 
@@ -85,21 +86,20 @@ loginWithWeibo :: Handler App App ()
 loginWithWeibo = loginWithOauth Nothing
 
 weiboCallback :: Handler App App ()
-weiboCallback = oauthCallbackHandler $ Just "/test"
+weiboCallback = oauthCallbackHandler $ Just "/accountShow"
 
-loginWithGoogle :: Handler App App ()
-loginWithGoogle = loginWithOauth $ Just googleScopeStr
-
-googleCallback :: Handler App App ()
-googleCallback = oauthCallbackHandler $ Just "/test"
+accountShow :: Handler App App ()
+accountShow = do
+  oauth <- readOAuthMVar
+  maybeUID <- liftIO $ requestUid oauth
+  case maybeUID of
+    Just uid  ->  (writeText . lbsToText) =<< liftIO (requestAccount oauth uid)
+    _         ->  writeBS "Failed at getting UID."
 
 test :: Handler App App ()
 test = do
-  ss <- getOauthSnaplet
-  writeText $ T.pack (show $ getOauth ss)
-
--- | this is special for google.
-googleScopeStr = renderSimpleQuery False [("scope", "https://www.googleapis.com/auth/userinfo.email")]
+  ss <- readOAuthMVar
+  writeText $ T.pack (show ss)
 
 
 ------------------------------------------------------------------------------
@@ -107,11 +107,10 @@ googleScopeStr = renderSimpleQuery False [("scope", "https://www.googleapis.com/
 -- | The application's routes.
 routes :: [(ByteString, Handler App App ())]
 routes  = [ ("", with heist heistServe) -- ^ FIXME: maybe no need heist
-          , ("/", writeBS "It works!<a href='/weibo'>login via weibo</a>, <a href='/google'>login via google</a>")  -- FIXME: parseHTML
-          , ("/weibo", loginWithWeibo)
-          , ("/google", loginWithGoogle)
-          , ("/oauthCallback", weiboCallback )
-          , ("/googleCallback", googleCallback)
+          , ("/", writeBS "It works!<a href='/weibo'>login via weibo</a>")  -- FIXME: parseHTML
+          , ("/weibo"        , loginWithWeibo)
+          , ("/oauthCallback", weiboCallback)
+          , ("/accountShow"  , accountShow)
           , ("/test", test)
           ]
 
@@ -119,10 +118,9 @@ routes  = [ ("", with heist heistServe) -- ^ FIXME: maybe no need heist
 app :: SnapletInit App App
 app = makeSnaplet "app" "An snaplet example application." Nothing $ do
     h <- nestSnaplet "heist" heist $ heistInit "templates"
-    w <- nestSnaplet "weiboOAuth" weibo $ initOauthSnaplet weiboOAuth "code"
-    g <- nestSnaplet "googleOAuth" google $ initOauthSnaplet googleOAuth "code"    
+    w <- nestSnaplet "weiboOAuth" weibo $ initOauthSnaplet weiboOAuth Nothing
     addRoutes routes
-    return $ App h w g
+    return $ App h w
 
 
 ------------------------------------------------------------------------------

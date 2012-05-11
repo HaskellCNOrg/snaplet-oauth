@@ -2,31 +2,35 @@
 
 module Snap.Snaplet.OAuth where
 
-import Control.Applicative
-import Data.Lens.Common
-import Data.Maybe
-import Network.OAuth2.HTTP.HttpClient
-import Network.OAuth2.OAuth2
-import qualified Data.ByteString as BS
-import qualified Data.ByteString.Char8 as BS8
-import           Prelude hiding ((.))
+import           Control.Applicative
 import           Control.Category
+import           Control.Concurrent.MVar
+import           Data.Lens.Common
+import           Data.Maybe
+import           Network.OAuth2.HTTP.HttpClient
+import           Network.OAuth2.OAuth2
+import           Prelude hiding ((.))
+
+import qualified Data.ByteString as BS
 
 import Snap
 
 -------------------------------------------------------
 -- TODO
 --
--- 1. could be multiple oauth impl in one app.
+-- 1. Shoule be able to do
+--     - allow multiple user login with various OAuth provider, e.g. Weibo/Google
 
 
 -------------------------------------------------------
 
+-- |
+--  FIXME: further, the OAuth2 should be a Map since accessToken is vary among users.
 -- 
 data OAuthSnaplet = OAuthSnaplet 
-                    { getOauth :: OAuth2             -- ^ This is major oauth related data
+                    { getOauth     :: MVar OAuth2             -- ^ This is major oauth related data
                     , getCodeParam :: BS.ByteString  -- ^ query param that oauth provider will use at callback url.
-                    } deriving (Show)                -- ^ e.g. localhost/oauthCallback?code=123, so pick up 'code'.
+                    }                                -- ^ e.g. localhost/oauthCallback?code=123, so pick up 'code'.
                    
 -- | TODO: just define `getOauthSnaplet` without oauthLens
 -- 
@@ -36,30 +40,46 @@ data OAuthSnaplet = OAuthSnaplet
 --   where the `oauth` here can be found at `data App = App { _oauth : xxxx, ....}
 -- 
 class HasOauth b where
-  oauthLens' :: Lens b (Snaplet OAuthSnaplet)
-  oauthLens :: Lens (Snaplet b) (Snaplet OAuthSnaplet)
+  oauthLens :: Lens b (Snaplet OAuthSnaplet)
   
-  getOauthSnaplet :: Handler b b OAuthSnaplet
-  getOauthSnaplet = with' oauthLens Snap.get
+  oauthLens' :: Lens (Snaplet b) (Snaplet OAuthSnaplet)
+  oauthLens' = subSnaplet oauthLens
 
-  updateOAuthSnaplet :: (MonadSnaplet m) => m b OAuthSnaplet a -> m b b a
-  updateOAuthSnaplet = with' oauthLens
+  
+  --updateOAuthSnaplet :: (MonadSnaplet m) => m b OAuthSnaplet a -> m b b a
+  --updateOAuthSnaplet = with oauthLens
+
+getOauthSnaplet :: HasOauth b => Handler b b OAuthSnaplet
+getOauthSnaplet = with oauthLens Snap.get
+
+readOAuthMVar' :: HasOauth b => OAuthSnaplet -> Handler b b OAuth2
+readOAuthMVar' = liftIO . readMVar . getOauth
+
+readOAuthMVar :: HasOauth b => Handler b b OAuth2
+readOAuthMVar = getOauthSnaplet >>= readOAuthMVar'
 
 -------------------------------------------------------
 
 -- | Init this OAuthSnaplet snaplet.
 -- 
-initOauthSnaplet :: OAuth2 -> BS.ByteString -> SnapletInit b OAuthSnaplet
+initOauthSnaplet :: OAuth2 -> Maybe BS.ByteString -> SnapletInit b OAuthSnaplet
 initOauthSnaplet oauth param
   = makeSnaplet "OAuthSnaplet" "" Nothing $
-        if (isOauthDataInit oauth)                   -- FIXME: && (not . BS.null param)
-        then return $ OAuthSnaplet oauth param
+        if (isOauthDataInit oauth) then do
+            mo <- liftIO $ newMVar oauth
+            return $ OAuthSnaplet mo (defaultParam param)
         else fail "OAuthSnaplet is not initlized correctly. Please check."
+    where 
+      defaultParam :: Maybe BS.ByteString -> BS.ByteString
+      defaultParam Nothing   = "code"
+      defaultParam (Just "") = "code"
+      defaultParam (Just x)  = x
 
 isOauthDataInit :: OAuth2 -> Bool
-isOauthDataInit o = foldr (\ f b -> (not . BS.null $ f o) && b) True [ oauthClientId, oauthClientSecret , 
-                                                     oauthOAuthorizeEndpoint , 
-                                                     oauthAccessTokenEndpoint ]
+isOauthDataInit o = foldr (\ f b -> (not . BS.null $ f o) && b) True [ oauthClientId, 
+                                                                       oauthClientSecret , 
+                                                                       oauthOAuthorizeEndpoint , 
+                                                                       oauthAccessTokenEndpoint ]
 
 -------------------------------------------------------
 -- Handlers
@@ -68,11 +88,11 @@ isOauthDataInit o = foldr (\ f b -> (not . BS.null $ f o) && b) True [ oauthClie
 -- | Login via OAuth. Redirect user for authorization.
 -- 
 loginWithOauth :: HasOauth b 
-               => Maybe BS.ByteString  -- ^ Maybe extra query parameters
+               => Maybe BS.ByteString  -- ^ Maybe extra query parameters,e.g., 'scope' param for google oauth.
                -> Handler b b ()
 loginWithOauth param = do
-    oauthSnaplet <- getOauthSnaplet
-    redirect $ (authorizationUrl $ getOauth oauthSnaplet) `BS.append` extraP param
+    oauth <- readOAuthMVar 
+    redirect $ (authorizationUrl oauth ) `BS.append` extraP param
     where extraP (Just x) = "&" `BS.append` x
           extraP Nothing  = ""
 
@@ -84,31 +104,37 @@ oauthCallbackHandler :: HasOauth b
                      -> Handler b b ()
 oauthCallbackHandler uri = do
     oauthSnaplet <- getOauthSnaplet
-    code         <- decodedParam' (getCodeParam oauthSnaplet)
-    maybeToken   <- liftIO $ requestAccessToken (getOauth oauthSnaplet) code
-    liftIO $ print uri
+    codeParam    <- decodedParam' (getCodeParam oauthSnaplet)
+    oauth        <- readOAuthMVar' oauthSnaplet
+    maybeToken   <- liftIO $ requestAccessToken oauth codeParam
     case maybeToken of 
         Just token -> do
-             updateOAuthSnaplet (modify $ modifyOAuthState token)
-             ss <- getOauthSnaplet
-             writeBS $ BS8.pack (show $ getOauth ss)
-             -- redirect $ fromMaybe "/" uri 
+             liftIO $ modifyOAuthState token oauthSnaplet
+             redirect $ fromMaybe "/" uri 
         _ -> writeBS "Error getting access token."
-
---modify2 token
-modify2 :: (MonadIO m, MonadState b m, HasOauth b) => AccessToken -> m ()
-modify2 token = modify (modL (snapletValue . oauthLens') (modifyOAuthState token))
 
 -------------------------------------------------------
 
--- | Update AccessToken after fetched.
-modifyOAuthState :: AccessToken -> OAuthSnaplet -> OAuthSnaplet
-modifyOAuthState (AccessToken at) oa = OAuthSnaplet { getOauth = newOA, getCodeParam = getCodeParam oa }
-                                       where newOA = originOA { oauthAccessToken = Just at }
-                                             originOA = getOauth oa
+
+modifyOAuthState :: AccessToken -> OAuthSnaplet -> IO ()
+modifyOAuthState at os = modifyMVar_ (getOauth os) (modifyAccessToken at)
+
+modifyAccessToken :: AccessToken -> OAuth2 -> IO OAuth2
+modifyAccessToken (AccessToken at) origin = return $ origin { oauthAccessToken = Just at }
+
 
 decodedParam' :: MonadSnap m => BS.ByteString -> m BS.ByteString
 decodedParam' p = fromMaybe "" <$> getParam p
 
 
 -------------------------------------------------------
+
+-- | Update AccessToken after fetched.
+--modifyOAuthState' :: AccessToken -> OAuthSnaplet -> OAuthSnaplet
+--modifyOAuthState' (AccessToken at) oa = OAuthSnaplet { getOauth = newOA, getCodeParam = getCodeParam oa }
+--                                       where newOA = originOA { oauthAccessToken = Just at }
+--                                             originOA = getOauth oa
+
+--modify2 token
+--modify2 :: (MonadIO m, MonadState b m, HasOauth b) => AccessToken -> m ()
+--modify2 token = modify (modL (snapletValue . oauthLens') (modifyOAuthState token))

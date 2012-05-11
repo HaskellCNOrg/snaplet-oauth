@@ -2,7 +2,7 @@
 Name:                snaplet-oauth
 Version:             0.0.2
 Synopsis:            snaplet-oauth
--- Description:         
+Description:         This lib is in Alpha status and APIs are likely to be changed.
 Homepage:            freizl.github.com
 License:             BSD3
 License-file:        LICENSE
