@@ -56,11 +56,8 @@ makeLens ''App
 instance HasHeist App where
     heistLens = subSnaplet heist
 
--- | FIXME : how to allow multiple OAuthSnaplets ??
 instance HasOauth App where
    oauthLens = weibo
-   --oauthLens' = google
-   --oauthLens = subSnaplet google
    
 
 type AppHandler = Handler App App
@@ -111,7 +108,6 @@ redirectToLogin :: OAuth2 -> Handler App App ()
 redirectToLogin oa = when (isNothing $ oauthAccessToken oa) $ redirect "weibo"
 
 
-
 testHandler :: Handler App App ()
 testHandler = readOAuthMVar >>= writeText . T.pack . show
 
@@ -120,8 +116,7 @@ testHandler = readOAuthMVar >>= writeText . T.pack . show
 
 -- | The application's routes.
 routes :: [(ByteString, Handler App App ())]
-routes  = [ ("", with heist heistServe) -- ^ FIXME: maybe no need heist
-          --, ("/", writeBS "It works!<a href='/weibo'>login via weibo</a>")  -- FIXME: parseHTML
+routes  = [ ("", with heist heistServe)
           , ("/weibo"        , loginWithWeiboHandler)
           , ("/oauthCallback", weiboCallbackHandler)
           , ("/accountShow"  , accountShowHandler)
