@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 
-module Api where
+module Weibo.Api where
 
 import qualified Data.ByteString as BS
 import qualified Data.Text.Encoding as T
@@ -17,12 +17,16 @@ import Network.HTTP.Conduit
 import qualified Data.ByteString.Char8 as BS8
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Network.HTTP.Types as HT
-
+import Control.Monad.Trans (liftIO)
+import Control.Monad.IO.Class (MonadIO)
 
 import Network.OAuth2.HTTP.HttpClient
 import Network.OAuth2.OAuth2
 
 import Utils
+
+---------------------------------------------------------------
+
 
 accountUidUri :: BS.ByteString
 accountUidUri = pack' "https://api.weibo.com/2/account/get_uid.json"
@@ -31,7 +35,6 @@ accountShowUri :: BS.ByteString
 accountShowUri = pack' "https://api.weibo.com/2/users/show.json"
 
 ---------------------------------------------------------------
-
 
 
 -- | UID
@@ -73,10 +76,11 @@ apiUrlGet2 uri (token, uid) = uri `BS.append` (renderSimpleQuery True $
 
 handleResponse :: Response BSL.ByteString -> IO BSL.ByteString
 handleResponse rsp = if (HT.statusCode . responseStatus) rsp == 200
-                   then return $ responseBody rsp
-                   else throwIO . OAuthException $ "Gaining uid failed: " ++ BSL.unpack (responseBody rsp)
+                     then do
+                          --print $ responseHeaders rsp
+                          return $ responseBody rsp
+                     else throwIO . OAuthException $ "Gaining uid failed: " ++ BSL.unpack (responseBody rsp)
 
 uidToParam :: WeiboUserId -> [(BS.ByteString, BS.ByteString)]
 uidToParam (WeiboUserId uid) = [("uid", intToByteString uid)]
-
 

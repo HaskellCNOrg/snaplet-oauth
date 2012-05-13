@@ -12,9 +12,10 @@ module Main where
 
 ------------------------------------------------------------------------------
 import           Control.Category
+import           Control.Monad
 import           Control.Exception (SomeException, try)
 import           Data.ByteString (ByteString)
-import           Data.Maybe (fromMaybe, fromJust)
+import           Data.Maybe
 import           Network.HTTP.Conduit (responseBody)
 import           Network.HTTP.Types (renderSimpleQuery)
 import           Prelude hiding ((.))
@@ -39,8 +40,8 @@ import           Snap.Loader.Prod
 import Network.OAuth2.OAuth2
 import Network.OAuth2.HTTP.HttpClient
 
-import Key
-import Api
+import Weibo.Key
+import Weibo.Api
 import Utils
 
 ------------------------------------------------------------------------------
@@ -91,10 +92,16 @@ weiboCallback = oauthCallbackHandler $ Just "/accountShow"
 accountShow :: Handler App App ()
 accountShow = do
   oauth <- readOAuthMVar
+  redirectToLogin oauth
   maybeUID <- liftIO $ requestUid oauth
   case maybeUID of
     Just uid  ->  (writeText . lbsToText) =<< liftIO (requestAccount oauth uid)
     _         ->  writeBS "Failed at getting UID."
+
+-- | Redirect to login page if not login yet.
+--
+redirectToLogin :: OAuth2 -> Handler App App ()
+redirectToLogin oa = when (isNothing $ oauthAccessToken oa) $ redirect "weibo"
 
 test :: Handler App App ()
 test = do
