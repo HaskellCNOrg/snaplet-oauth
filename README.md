@@ -1,7 +1,10 @@
 snaplet-oauth
 =============
 
-snaplet-oauth
+test
+=============
+
+- demo: make test-demo
 
 
 snaplet

@@ -77,14 +77,17 @@ weiboOAuth = weiboKey { oauthOAuthorizeEndpoint = "https://api.weibo.com/oauth2/
 decodedParam :: MonadSnap m => ByteString -> m ByteString
 decodedParam p = fromMaybe "" <$> getParam p
 
-loginWithWeibo :: Handler App App ()
-loginWithWeibo = loginWithOauth Nothing
+------------------------------------------------------------------------------
 
-weiboCallback :: Handler App App ()
-weiboCallback = oauthCallbackHandler $ Just "/accountShow"
+loginWithWeiboHandler :: Handler App App ()
+loginWithWeiboHandler = loginWithOauth Nothing
 
-accountShow :: Handler App App ()
-accountShow = do
+weiboCallbackHandler :: Handler App App ()
+weiboCallbackHandler = oauthCallbackHandler $ Just "/"
+
+-- | Show Account detail info.
+accountShowHandler :: Handler App App ()
+accountShowHandler = do
   oauth <- readOAuthMVar
   redirectToLogin oauth
   maybeUID <- liftIO $ requestUid oauth
@@ -92,15 +95,25 @@ accountShow = do
     Just uid  ->  (writeText . lbsToText) =<< liftIO (requestAccount oauth uid)
     _         ->  writeBS "Failed at getting UID."
 
+postnewHandler:: Handler App App ()
+postnewHandler = do
+  oauth <- readOAuthMVar
+  redirectToLogin oauth
+  content <- decodedParam "content"
+  rsp <- liftIO $ postNew content oauth
+  writeLBS rsp 
+
 -- | Redirect to login page if not login yet.
 --
+-- FIXME: better to notice user that redirect to login via weibo.
+-- 
 redirectToLogin :: OAuth2 -> Handler App App ()
 redirectToLogin oa = when (isNothing $ oauthAccessToken oa) $ redirect "weibo"
 
-test :: Handler App App ()
-test = do
-  ss <- readOAuthMVar
-  writeText $ T.pack (show ss)
+
+
+testHandler :: Handler App App ()
+testHandler = readOAuthMVar >>= writeText . T.pack . show
 
 
 ------------------------------------------------------------------------------
@@ -108,11 +121,12 @@ test = do
 -- | The application's routes.
 routes :: [(ByteString, Handler App App ())]
 routes  = [ ("", with heist heistServe) -- ^ FIXME: maybe no need heist
-          , ("/", writeBS "It works!<a href='/weibo'>login via weibo</a>")  -- FIXME: parseHTML
-          , ("/weibo"        , loginWithWeibo)
-          , ("/oauthCallback", weiboCallback)
-          , ("/accountShow"  , accountShow)
-          , ("/test", test)
+          --, ("/", writeBS "It works!<a href='/weibo'>login via weibo</a>")  -- FIXME: parseHTML
+          , ("/weibo"        , loginWithWeiboHandler)
+          , ("/oauthCallback", weiboCallbackHandler)
+          , ("/accountShow"  , accountShowHandler)
+          , ("/postnew"  , postnewHandler)
+          , ("/test", testHandler)
           ]
 
 -- | The application initializer.
@@ -130,7 +144,7 @@ main :: IO ()
 main = do
     (conf, site, cleanup) <- $(loadSnapTH [| getConf |]
                                           'getActions
-                                          ["snaplets/heist/templates"])
+                                          ["heist/templates"])
 
     _ <- try $ httpServe conf $ site :: IO (Either SomeException ())
     cleanup
@@ -175,5 +189,4 @@ with
 withTop
   at first grance, there have same type signature. 
   so any differences?? dig into detail but not understand it yet.
-
 -}

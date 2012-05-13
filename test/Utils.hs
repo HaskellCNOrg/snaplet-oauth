@@ -17,6 +17,5 @@ toStrickBS' = BS.concat . LBS.toChunks
 pack' :: String -> BS.ByteString
 pack' = T.encodeUtf8 . T.pack
 
-
 lbsToText :: LBS.ByteString -> T.Text
 lbsToText = T.decodeUtf8 . toStrickBS'

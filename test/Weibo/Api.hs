@@ -34,10 +34,12 @@ accountUidUri = pack' "https://api.weibo.com/2/account/get_uid.json"
 accountShowUri :: BS.ByteString
 accountShowUri = pack' "https://api.weibo.com/2/users/show.json"
 
+accountStatusUpdate :: String
+accountStatusUpdate ="https://api.weibo.com/2/statuses/update.json"
+
 ---------------------------------------------------------------
 
-
--- | UID
+-- | UID data type
 data WeiboUserId = WeiboUserId { weiboUserId :: Int } deriving (Show)
 
 instance FromJSON WeiboUserId where
@@ -46,20 +48,18 @@ instance FromJSON WeiboUserId where
 
 ---------------------------------------------------------------
 
--- | Fetch UID
+-- | Fetch
 -- 
 requestUid :: OAuth2
            -> IO (Maybe WeiboUserId)
 requestUid oa = decode <$> requestUid' accountUidUri oa
 
-requestUid' :: URI 
-           -> OAuth2
-           -> IO BSL.ByteString
+requestUid' :: URI -> OAuth2 -> IO BSL.ByteString
 requestUid' uri oa = doSimpleGetRequest (BS8.unpack $ appendAccessToken uri oa) >>= handleResponse
 
----------------------------------------------------------------
 
--- | Fetch User information
+-- | User Info
+-- 
 requestAccount :: OAuth2 -> WeiboUserId -> IO BSL.ByteString
 requestAccount oa uid = doSimpleGetRequest (BS8.unpack $ apiUrlGet2 accountShowUri atid) >>= handleResponse
                         where atid = (fromJust $ oauthAccessToken oa, uid)
@@ -67,18 +67,30 @@ requestAccount oa uid = doSimpleGetRequest (BS8.unpack $ apiUrlGet2 accountShowU
 
 ---------------------------------------------------------------
 
-apiUrlGet2 :: URI                        -- ^ Base URI
-          -> (BS.ByteString, WeiboUserId)  -- ^ Authorized Access Token and UID
-          -> URI                         -- ^ Combined Result
-apiUrlGet2 uri (token, uid) = uri `BS.append` (renderSimpleQuery True $ 
-                                               (accessTokenToParam token ++ uidToParam uid))
+-- | Post anew
+postNew :: BS.ByteString -> OAuth2 -> IO BSL.ByteString
+postNew post oa = doPostRequst accountStatusUpdate [packPostContent post, accessTokenToParam' oa] 
+                  >>= handleResponse
+                        
+packPostContent :: BS.ByteString -> (BS.ByteString, BS.ByteString)
+packPostContent post = ("status", post)
+
+accessTokenToParam' :: OAuth2 -> (BS.ByteString, BS.ByteString)
+accessTokenToParam' oa = ("access_token", token)
+                         where token = fromJust $ oauthAccessToken oa
+
+
+---------------------------------------------------------------
+
+apiUrlGet2 :: URI                         -- ^ Base URI
+          -> (BS.ByteString, WeiboUserId) -- ^ Authorized Access Token and UID
+          -> URI                          -- ^ Combined Result
+apiUrlGet2 uri (token, uid) = uri `BS.append` renderSimpleQuery True (accessTokenToParam token ++ uidToParam uid)
 
 
 handleResponse :: Response BSL.ByteString -> IO BSL.ByteString
 handleResponse rsp = if (HT.statusCode . responseStatus) rsp == 200
-                     then do
-                          --print $ responseHeaders rsp
-                          return $ responseBody rsp
+                     then return $ responseBody rsp
                      else throwIO . OAuthException $ "Gaining uid failed: " ++ BSL.unpack (responseBody rsp)
 
 uidToParam :: WeiboUserId -> [(BS.ByteString, BS.ByteString)]
