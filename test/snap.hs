@@ -74,12 +74,6 @@ weiboOAuth = weiboKey { oauthOAuthorizeEndpoint = "https://api.weibo.com/oauth2/
                       , oauthAccessToken = Nothing
                       }
 
-googleOAuth :: OAuth2
-googleOAuth = googleKeys { oauthOAuthorizeEndpoint = "https://accounts.google.com/o/oauth2/auth"
-                   , oauthAccessTokenEndpoint = "https://accounts.google.com/o/oauth2/token" 
-                   , oauthAccessToken = Nothing
-                   }
-
 decodedParam :: MonadSnap m => ByteString -> m ByteString
 decodedParam p = fromMaybe "" <$> getParam p
 
