@@ -1,42 +1,45 @@
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE OverloadedStrings #-}
 
-import Control.Category
-import Prelude hiding ((.))
-import           Snap hiding (Response)
-import Network.HTTP.Conduit
-import Control.Monad.Trans (liftIO)
-import Control.Monad.IO.Class (MonadIO)
-import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Aeson (decode)
-import Test.HUnit
+import Data.Maybe (isJust)
+import qualified Data.ByteString.Lazy.Char8 as BSL
+import Test.Framework (Test, testGroup, defaultMain)
+import Test.Framework.Providers.HUnit (testCase)
+import Test.HUnit ((@?), (@?=))
 
-import Network.OAuth2.OAuth2
-import Utils
-
-data Quux = Quux
-
-data Foo = Foo { _quux :: Quux }
-
-makeLenses [''Foo]
-
---appQuuxLens :: Lens Foo Quux
---appQuuxLens = quux . snapletValue . Foo
-
+import Weibo.Types
 
 main :: IO ()
-main = do
-       print prop_getUid
-       print prop_getInvalidUid
-       print $ intToByteString 1234
+main = testSuits
+
+testSuits :: IO ()
+testSuits = defaultMain
+            [ uidTests
+            ]
+
+uidTests :: Test
+uidTests = testGroup "uid test cases" 
+                     [ testCase "uid shall be 12345" $ getUid @?= (Just aOid)
+                     , testCase "uid shall be any number" $ isJust getUid @? "uid any number test"
+                     , testCase "uid is not string" $ getInvalidUid @?= Nothing
+                     ]
+
+------------------------------------------------
 
 invalidUidString :: BSL.ByteString
-invalidUidString = "{\"uid\" : \"222222\" }"
+invalidUidString = "{\"uid\" : \"12345\" }"
 
-prop_getInvalidUid :: Maybe WeiboUserId
-prop_getInvalidUid = decode invalidUidString
+getInvalidUid :: Maybe WeiboUserId
+getInvalidUid = decode invalidUidString
+
+------------------------------------------------
+
+aOid :: WeiboUserId
+aOid = WeiboUserId 12345
 
 uidString :: BSL.ByteString
-uidString = "{\"uid\" : 222222 }"
+uidString = "{\"uid\" : 12345 }"
 
-prop_getUid :: Maybe WeiboUserId
-prop_getUid = decode uidString
+getUid :: Maybe WeiboUserId
+getUid = decode uidString

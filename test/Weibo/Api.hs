@@ -17,34 +17,15 @@ import Network.HTTP.Conduit
 import qualified Data.ByteString.Char8 as BS8
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Network.HTTP.Types as HT
-import Control.Monad.Trans (liftIO)
-import Control.Monad.IO.Class (MonadIO)
+--import Control.Monad.Trans (liftIO)
+--import Control.Monad.IO.Class (MonadIO)
 
 import Network.OAuth2.HTTP.HttpClient
 import Network.OAuth2.OAuth2
 
+import Weibo.Types
 import Utils
 
----------------------------------------------------------------
-
-
-accountUidUri :: BS.ByteString
-accountUidUri = pack' "https://api.weibo.com/2/account/get_uid.json"
-
-accountShowUri :: BS.ByteString
-accountShowUri = pack' "https://api.weibo.com/2/users/show.json"
-
-accountStatusUpdate :: String
-accountStatusUpdate ="https://api.weibo.com/2/statuses/update.json"
-
----------------------------------------------------------------
-
--- | UID data type
-data WeiboUserId = WeiboUserId { weiboUserId :: Int } deriving (Show)
-
-instance FromJSON WeiboUserId where
-    parseJSON (Object o) = WeiboUserId <$> o .: "uid"
-    parseJSON _ = mzero
 
 ---------------------------------------------------------------
 
