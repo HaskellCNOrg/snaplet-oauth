@@ -4,6 +4,9 @@
 snaplet-oauth
 =============
 
+Currently, only allow one user login per time!
+
+
 test
 =============
 

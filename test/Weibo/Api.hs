@@ -42,8 +42,11 @@ requestUid' uri oa = doSimpleGetRequest (BS8.unpack $ appendAccessToken uri oa) 
 -- | User Info
 -- 
 requestAccount :: OAuth2 -> WeiboUserId -> IO BSL.ByteString
-requestAccount oa uid = doSimpleGetRequest (BS8.unpack $ apiUrlGet2 accountShowUri atid) >>= handleResponse
-                        where atid = (fromJust $ oauthAccessToken oa, uid)
+requestAccount oa uid = do
+    print uri
+    doSimpleGetRequest uri >>= handleResponse
+    where uri = (BS8.unpack $ apiUrlGet2 accountShowUri atid)
+          atid = (fromJust $ oauthAccessToken oa, uid)
 
 
 ---------------------------------------------------------------

@@ -41,7 +41,9 @@ import Network.OAuth2.OAuth2
 import Network.OAuth2.HTTP.HttpClient
 
 import Weibo.Key
+import Taobao.Key
 import Weibo.Api
+import Taobao.Api
 import Utils
 
 ------------------------------------------------------------------------------
@@ -71,6 +73,12 @@ weiboOAuth = weiboKey { oauthOAuthorizeEndpoint = "https://api.weibo.com/oauth2/
                       , oauthAccessToken = Nothing
                       }
 
+taobaoOAuth :: OAuth2
+taobaoOAuth = taobaoKey { oauthOAuthorizeEndpoint = "https://oauth.taobao.com/authorize"
+                      , oauthAccessTokenEndpoint = "https://oauth.taobao.com/token" 
+                      , oauthAccessToken = Nothing
+                      }
+
 decodedParam :: MonadSnap m => ByteString -> m ByteString
 decodedParam p = fromMaybe "" <$> getParam p
 
@@ -78,6 +86,7 @@ decodedParam p = fromMaybe "" <$> getParam p
 
 loginWithWeiboHandler :: Handler App App ()
 loginWithWeiboHandler = loginWithOauth Nothing
+
 
 weiboCallbackHandler :: Handler App App ()
 weiboCallbackHandler = oauthCallbackHandler $ Just "/"
@@ -100,6 +109,19 @@ postnewHandler = do
   rsp <- liftIO $ postNew content oauth
   writeLBS rsp 
 
+----------------------------------------------------------------------------
+
+
+loginWithTaobaoHandler :: Handler App App ()
+loginWithTaobaoHandler = loginWithOauth Nothing
+
+taobaoUserGetH :: Handler App App ()
+taobaoUserGetH = readOAuthMVar >>= liftIO . taobaoUserGet >>= writeLBS
+
+
+----------------------------------------------------------------------------
+
+
 -- | Redirect to login page if not login yet.
 --
 -- FIXME: better to notice user that redirect to login via weibo.
@@ -108,8 +130,8 @@ redirectToLogin :: OAuth2 -> Handler App App ()
 redirectToLogin oa = when (isNothing $ oauthAccessToken oa) $ redirect "weibo"
 
 
-testHandler :: Handler App App ()
-testHandler = readOAuthMVar >>= writeText . T.pack . show
+showOAuthDataHandler :: Handler App App ()
+showOAuthDataHandler = readOAuthMVar >>= writeText . T.pack . show
 
 
 ------------------------------------------------------------------------------
@@ -118,10 +140,12 @@ testHandler = readOAuthMVar >>= writeText . T.pack . show
 routes :: [(ByteString, Handler App App ())]
 routes  = [ ("", with heist heistServe)
           , ("/weibo"        , loginWithWeiboHandler)
-          , ("/oauthCallback", weiboCallbackHandler)
-          , ("/accountShow"  , accountShowHandler)
           , ("/postnew"  , postnewHandler)
-          , ("/test", testHandler)
+          , ("/accountShow"  , accountShowHandler)
+          , ("/taobao"        , loginWithTaobaoHandler)
+          , ("/taobao/user"        , taobaoUserGetH)
+          , ("/oauthCallback", weiboCallbackHandler)
+          , ("/test", showOAuthDataHandler)
           ]
 
 -- | The application initializer.
@@ -129,6 +153,7 @@ app :: SnapletInit App App
 app = makeSnaplet "app" "An snaplet example application." Nothing $ do
     h <- nestSnaplet "heist" heist $ heistInit "templates"
     w <- nestSnaplet "weiboOAuth" weibo $ initOauthSnaplet weiboOAuth Nothing
+    --w <- nestSnaplet "taobaoOAuth" weibo $ initOauthSnaplet taobaoOAuth Nothing
     addRoutes routes
     return $ App h w
 
