@@ -120,7 +120,7 @@ modifyOAuthState :: AccessToken -> OAuthSnaplet -> IO ()
 modifyOAuthState at os = modifyMVar_ (getOauth os) (modifyAccessToken at)
 
 modifyAccessToken :: AccessToken -> OAuth2 -> IO OAuth2
-modifyAccessToken (AccessToken at) origin = return $ origin { oauthAccessToken = Just at }
+modifyAccessToken (AccessToken at _) origin = return $ origin { oauthAccessToken = Just at }
 
 
 decodedParam' :: MonadSnap m => BS.ByteString -> m BS.ByteString
