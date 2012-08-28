@@ -34,3 +34,9 @@ test: build-test
 
 test-demo:
 	cd test/ && runghc -package-conf=../cabal-dev/packages-7.4.1.conf/ snap.hs -b 127.0.0.1 -p 9988
+
+local:
+	rm -rf ./cabal-dev/lib/hoauth*
+	rm -f ./cabal-dev/packages-7.4.1.conf/hoauth2-*
+	$(CDEV) add-source ../hoauth2
+	$(CDEV) install
