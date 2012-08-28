@@ -106,7 +106,9 @@ oauthCallbackHandler uri = do
     oauthSnaplet <- getOauthSnaplet
     codeParam    <- decodedParam' (getCodeParam oauthSnaplet)
     oauth        <- readOAuthMVar' oauthSnaplet
+    liftIO $ print codeParam
     maybeToken   <- liftIO $ requestAccessToken oauth codeParam
+    liftIO $ print maybeToken
     case maybeToken of 
         Just token -> do
              liftIO $ modifyOAuthState token oauthSnaplet

@@ -90,7 +90,7 @@ loginWithWeiboHandler = loginWithOauth Nothing
 
 
 weiboCallbackHandler :: Handler App App ()
-weiboCallbackHandler = oauthCallbackHandler $ Just "/"
+weiboCallbackHandler = oauthCallbackHandler (Just "/")
 
 -- | Show Account detail info.
 accountShowHandler :: Handler App App ()
@@ -153,8 +153,8 @@ routes  = [ ("", with heist heistServe)
 app :: SnapletInit App App
 app = makeSnaplet "app" "An snaplet example application." Nothing $ do
     h <- nestSnaplet "heist" heist $ heistInit "templates"
-    w <- nestSnaplet "weiboOAuth" weibo $ initOauthSnaplet weiboOAuth Nothing
-    --w <- nestSnaplet "taobaoOAuth" weibo $ initOauthSnaplet taobaoOAuth Nothing
+--    w <- nestSnaplet "weiboOAuth" weibo $ initOauthSnaplet weiboOAuth Nothing
+    w <- nestSnaplet "taobaoOAuth" weibo $ initOauthSnaplet taobaoOAuth Nothing
     addRoutes routes
     return $ App h w
 
