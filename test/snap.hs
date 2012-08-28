@@ -21,6 +21,7 @@ import           Network.HTTP.Types (renderSimpleQuery)
 import           Prelude hiding ((.))
 import           Snap
 import           Snap.Core
+import           Snap.Snaplet.Config
 import           Snap.Http.Server
 import           Snap.Snaplet.Heist
 import           Snap.Snaplet.OAuth
@@ -32,9 +33,9 @@ import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
 
 #ifdef DEVELOPMENT
-import           Snap.Loader.Devel
+import           Snap.Loader.Dynamic
 #else
-import           Snap.Loader.Prod
+import           Snap.Loader.Static
 #endif
 
 import Network.OAuth2.OAuth2
@@ -169,12 +170,13 @@ main = do
     _ <- try $ httpServe conf $ site :: IO (Either SomeException ())
     cleanup
 
-getConf :: IO (Config Snap ())
-getConf = commandLineConfig defaultConfig
+getConf :: IO (Config Snap AppConfig)
+getConf = commandLineAppConfig defaultConfig
 
-getActions :: Config Snap () -> IO (Snap (), IO ())
-getActions _ = do
-    (msgs, site, cleanup) <- runSnaplet app
+getActions :: Config Snap AppConfig -> IO (Snap (), IO ())
+getActions conf = do
+    (msgs, site, cleanup) <- runSnaplet
+        (appEnvironment =<< getOther conf) app
     hPutStrLn stderr $ T.unpack msgs
     return (site, cleanup)
 

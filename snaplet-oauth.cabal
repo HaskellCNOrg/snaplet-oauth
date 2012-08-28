@@ -26,14 +26,17 @@ Library
       Snap.Snaplet.OAuth
 
   Build-Depends:    
-      base               >= 4     && < 5,
-      bytestring         >= 0.9   && < 1.0,
-      data-lens          >= 2.0.1 && < 2.11,
-      data-lens-template == 2.1.*,
-      failure            >= 0.1   && < 0.2,
-      hoauth2            == 0.2.3,
-      snap               == 0.9.*,
-      snap-core          == 0.9.*
+      base                 >= 4     && < 5,
+      bytestring           >= 0.9   && < 1.0,
+      data-lens            >= 2.0.1 && < 2.11,
+      data-lens-template   == 2.1.*,
+      failure              >= 0.1   && < 0.2,
+      hoauth2              == 0.2.3,
+      snap                 == 0.9.*,
+      snap-core            == 0.9.*,
+      snap-loader-dynamic  == 0.9.*,
+      snap-loader-static   == 0.9.*
+
 
   if impl(ghc >= 6.12.0)
       ghc-options: -threaded -Wall -fwarn-tabs -funbox-strict-fields -O2
