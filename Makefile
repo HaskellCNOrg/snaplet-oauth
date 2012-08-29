@@ -37,6 +37,7 @@ test-demo:
 
 local:
 	rm -rf ./cabal-dev/lib/hoauth*
+	rm -rf ./cabal-dev/packages/hoauth*
 	rm -f ./cabal-dev/packages-7.4.1.conf/hoauth2-*
 	$(CDEV) add-source ../hoauth2
 	$(CDEV) install
