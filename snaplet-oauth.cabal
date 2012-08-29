@@ -31,7 +31,7 @@ Library
       data-lens            >= 2.0.1 && < 2.11,
       data-lens-template   == 2.1.*,
       failure              >= 0.1,
-      hoauth2              == 0.2.3,
+      hoauth2              == 0.2.2,
       snap                 == 0.9.*,
       snap-core            == 0.9.*,
       snap-loader-dynamic  == 0.9.*,
