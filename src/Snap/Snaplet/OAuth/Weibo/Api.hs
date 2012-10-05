@@ -29,19 +29,18 @@ import           Snap.Snaplet.OAuth.Weibo.Types
 
 -- | User ID
 --
-requestUid :: OAuth2
-           -> IO (Maybe WeiboUserId)
+requestUid :: OAuth2 -> IO (Maybe WeiboUserId)
 requestUid oa = decode <$> requestUid' accountUidUri oa
 
 requestUid' :: URI -> OAuth2 -> IO BSL.ByteString
-requestUid' uri oa = doSimpleGetRequest (BS8.unpack $ appendAccessToken uri oa) >>= handleResponse
+requestUid' uri oa = doSimpleGetRequest (BS8.unpack $ appendAccessToken uri oa)
+                     >>= handleResponse
 
 
 -- | User Info
 --
 requestAccount :: OAuth2 -> WeiboUserId -> IO BSL.ByteString
 requestAccount oa uid = do
-    print uri
     doSimpleGetRequest uri >>= handleResponse
     where uri = (BS8.unpack $ apiUrlGet2 accountShowUri atid)
           atid = (fromJust $ oauthAccessToken oa, uid)
@@ -52,7 +51,9 @@ requestAccount oa uid = do
 apiUrlGet2 :: URI                         -- ^ Base URI
           -> (BS.ByteString, WeiboUserId) -- ^ Authorized Access Token and UID
           -> URI                          -- ^ Combined Result
-apiUrlGet2 uri (token, uid) = uri `BS.append` renderSimpleQuery True (accessTokenToParam token ++ uidToParam uid)
+apiUrlGet2 uri (token, uid) = uri
+                              `BS.append`
+                              renderSimpleQuery True (accessTokenToParam token ++ uidToParam uid)
 
 
 handleResponse :: Response BSL.ByteString -> IO BSL.ByteString

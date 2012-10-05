@@ -26,7 +26,7 @@ import Snap.Snaplet.OAuth
 ------------------------------------------------------------------------------
 
 import           Application
-
+import qualified OAuthHandlers as OA
 
 ------------------------------------------------------------------------------
 -- | Render login form
@@ -67,8 +67,11 @@ routes :: [(ByteString, Handler App App ())]
 routes = [ ("/login",    with auth handleLoginSubmit)
          , ("/logout",   with auth handleLogout)
          , ("/new_user", with auth handleNewUser)
-         , ("",          serveDirectory "static")
          ]
+         <|>
+         OA.routes
+         <|>
+         [ ("",          serveDirectory "static") ]
 
 
 ------------------------------------------------------------------------------
@@ -91,7 +94,7 @@ app = makeSnaplet "app" "An snaplet example application." Nothing $ do
     -- the url becomes /oauth/weibo
     --                 /oauth/oauthCallback
     --
-    oa <- nestSnaplet "" oauth $ initOauthSnaplet
+    oa <- nestSnaplet "oauth" oauth $ initOauthSnaplet
     addRoutes routes
     addAuthSplices auth
     return $ App h s a oa

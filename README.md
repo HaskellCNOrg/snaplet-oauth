@@ -4,14 +4,14 @@
 snaplet-oauth
 =============
 
-Currently, only allow one user login per time!
-
+  1. make init-key
+  2. make install
 
 test
 =============
 
-- demo: make test-demo
-
+  - make test
+  - cd example && make prev
 
 snaplet
 =============

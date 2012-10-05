@@ -33,7 +33,7 @@ Executable example
     text >= 0.11 && < 0.12,
     time >= 1.1 && < 1.5,
     xmlhtml >= 0.1,
-    snaplet-oauth == 0.0.4
+    snaplet-oauth == 0.0.5
 
   if flag(development)
     build-depends:

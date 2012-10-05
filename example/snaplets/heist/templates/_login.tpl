@@ -9,10 +9,10 @@
 <p>Don't have a login yet? <a href="/new_user">Create a new user</a></p>
 <ol>
   <li>
-    <a href="/weibo">Login with Weibo</a>
+    <a href="/oauth/weibo">Login with Weibo</a>
   </li>
-  <li>
-    <a href="/weibo/account">Weibo Account</a> 
-  </li>
+  <!-- <li> -->
+  <!--   <a href="/oauth/weibo/account">Weibo Account</a>  -->
+  <!-- </li> -->
 </ol>
 

@@ -33,9 +33,8 @@ loginWithOauth param = do
 -- | Callback for oauth provider.
 --
 oauthCallbackHandler :: HasOauth b
-                     => Maybe BS.ByteString   -- ^ redirect to when successfully. default to "/"
-                     -> Handler b v ()
-oauthCallbackHandler uri = do
+                     => Handler b v ()
+oauthCallbackHandler = do
     oauthSnaplet <- getOauthSnaplet
     codeParam    <- decodedParam' (getCodeParam oauthSnaplet)
     oauth        <- readOAuthMVar' oauthSnaplet
@@ -43,8 +42,11 @@ oauthCallbackHandler uri = do
     case maybeToken of
         Just token -> do
              liftIO $ modifyOAuthState token oauthSnaplet
-             redirect $ fromMaybe "/" uri
         _ -> writeBS "Error getting access token."
+
+-- | 
+defaultOAuthCallbackHandler :: HasOauth b => Handler b v ()
+defaultOAuthCallbackHandler = oauthCallbackHandler >> redirect "/"
 
 -------------------------------------------------------
 
@@ -59,15 +61,4 @@ modifyAccessToken (AccessToken at) origin = return $ origin { oauthAccessToken =
 decodedParam' :: MonadSnap m => BS.ByteString -> m BS.ByteString
 decodedParam' p = fromMaybe "" <$> getParam p
 
-
 -------------------------------------------------------
-
--- | Update AccessToken after fetched.
---modifyOAuthState' :: AccessToken -> OAuthSnaplet -> OAuthSnaplet
---modifyOAuthState' (AccessToken at) oa = OAuthSnaplet { getOauth = newOA, getCodeParam = getCodeParam oa }
---                                       where newOA = originOA { oauthAccessToken = Just at }
---                                             originOA = getOauth oa
-
---modify2 token
---modify2 :: (MonadIO m, MonadState b m, HasOauth b) => AccessToken -> m ()
---modify2 token = modify (modL (snapletValue . oauthLens') (modifyOAuthState token))
