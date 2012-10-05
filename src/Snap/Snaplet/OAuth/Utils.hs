@@ -11,7 +11,7 @@ import qualified Data.Text.Encoding   as T
 import           Snap
 import qualified Text.Show.ByteString as TSB
 
-intToByteString :: Int -> BS.ByteString
+intToByteString :: Integer -> BS.ByteString
 intToByteString = toStrickBS' . TSB.show
 
 toStrickBS' :: LBS.ByteString -> BS.ByteString

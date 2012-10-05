@@ -21,7 +21,8 @@ import           Snap.Snaplet.OAuth.Types
 -- | Login via OAuth. Redirect user for authorization.
 --
 loginWithOauth :: HasOauth b
-               => Maybe BS.ByteString  -- ^ Maybe extra query parameters,e.g., 'scope' param for google oauth.
+               => Maybe BS.ByteString
+               -- ^ Maybe extra query parameters,e.g., 'scope' param for google oauth.
                -> Handler b v ()
 loginWithOauth param = do
     oauth <- readOAuthMVar

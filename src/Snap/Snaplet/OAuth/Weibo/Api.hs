@@ -58,7 +58,9 @@ apiUrlGet2 uri (token, uid) = uri
 
 handleResponse :: Response BSL.ByteString -> IO BSL.ByteString
 handleResponse rsp = if (HT.statusCode . responseStatus) rsp == 200
-                     then return $ responseBody rsp
+                     then do
+                          let body = responseBody rsp
+                          return body
                      else throwIO . OAuthException $ "Gaining uid failed: " ++ BSL.unpack (responseBody rsp)
 
 uidToParam :: WeiboUserId -> [(BS.ByteString, BS.ByteString)]

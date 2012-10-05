@@ -37,6 +37,11 @@ oauthCallbackH = W.weiboCallbackH
                  >>= (with auth . createWeiboUser)
                  >> redirect "/"
 
+testUidH :: AppHandler ()
+testUidH = do
+    uid <- W.userIdH
+    writeText $ T.pack $ show uid
+
 getUserId :: Maybe W.WeiboUserId -> AppHandler T.Text
 getUserId Nothing = return "Weibo User ID: Nothing Found" -- FIXME: Exception
 getUserId (Just uid) = return . T.pack . show . W.weiboUserId $ uid
@@ -63,4 +68,5 @@ textToBS = T.encodeUtf8
 -- | The application's routes.
 routes :: [(ByteString, AppHandler ())]
 routes = [ ("/oauthCallback", oauthCallbackH)
+         , ("/testuid", testUidH)
          ]

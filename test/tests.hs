@@ -8,7 +8,7 @@ import           Test.Framework                 (Test, defaultMain, testGroup)
 import           Test.Framework.Providers.HUnit (testCase)
 import           Test.HUnit                     ((@?), (@?=))
 
-import           Types
+import           Snap.Snaplet.OAuth.Weibo.Types
 
 main :: IO ()
 main = testSuits
@@ -21,6 +21,7 @@ testSuits = defaultMain
 uidTests :: Test
 uidTests = testGroup "uid test cases"
                      [ testCase "uid shall be 12345" $ getUid @?= (Just aOid)
+                     , testCase "uid shall be 2709495807" $ getUid2 @?= (Just aOid2)
                      , testCase "uid shall be any number" $ isJust getUid @? "uid any number test"
                      , testCase "uid is not string" $ getInvalidUid @?= Nothing
                      ]
@@ -38,8 +39,9 @@ getInvalidUid = decode invalidUidString
 aOid :: WeiboUserId
 aOid = WeiboUserId 12345
 
-uidString :: BSL.ByteString
-uidString = "{\"uid\" : 12345 }"
-
 getUid :: Maybe WeiboUserId
-getUid = decode uidString
+getUid = decode ("{\"uid\" : 12345 }" :: BSL.ByteString)
+
+
+aOid2 = WeiboUserId 2709495807123
+getUid2 = decode ("{\"uid\" : 2709495807123 }" :: BSL.ByteString)

@@ -27,7 +27,7 @@ accountStatusUpdate ="https://api.weibo.com/2/statuses/update.json"
 ---------------------------------------------------------------
 
 -- | UID data type
-data WeiboUserId = WeiboUserId { weiboUserId :: Int } deriving (Show, Eq)
+data WeiboUserId = WeiboUserId { weiboUserId :: Integer } deriving (Show, Eq)
 
 instance FromJSON WeiboUserId where
     parseJSON (Object o) = WeiboUserId <$> o .: "uid"
