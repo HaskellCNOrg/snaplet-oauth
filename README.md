@@ -14,8 +14,8 @@ Installation
 test
 =============
 
-  - make test
-  - cd example && make prev
+  - unit tests: `make test`
+  - demo: `make demo`
 
 snaplet
 =============
