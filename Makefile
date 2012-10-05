@@ -3,7 +3,7 @@ HC=ghc
 DIST=dist
 CDEV=cabal-dev
 
-.PHONY: example test
+.PHONY: clean test
 
 default: build
 
@@ -13,6 +13,9 @@ init:
 
 clean:
 	rm -rf $(DIST)
+	rm -rf ./cabal-dev/lib/snaplet-oauth*
+	rm -rf ./cabal-dev/packages/snaplet-oauth*
+	rm -f ./cabal-dev/packages-7.4.1.conf/snaplet-oauth-*
 
 conf:
 	$(CDEV) configure
@@ -35,7 +38,9 @@ test: build-test
 	$(CDEV) test
 
 example:
-	cd example/ && runghc -package-conf=../cabal-dev/packages-7.4.1.conf/ snap.hs -b 127.0.0.1 -p 9988
+	cd example/ && $(CDEV) --sandbox ../cabal-dev configure build
+
+#	cd example/ && runghc -package-conf=../cabal-dev/packages-7.4.1.conf/ snap.hs -b 127.0.0.1 -p 9988
 
 local:
 	rm -rf ./cabal-dev/lib/hoauth*

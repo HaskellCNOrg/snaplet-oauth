@@ -182,36 +182,3 @@ getActions conf = do
         (appEnvironment =<< getOther conf) app
     hPutStrLn stderr $ T.unpack msgs
     return (site, cleanup)
-
-
-------------------------------------------------------------------------------
---                    Working notes                                   --
-------------------------------------------------------------------------------
-
--- modifySnapletState :: (Snaplet v -> Snaplet v) -> Handler b v ()
--- getL :: (Lens a b) -> a -> b
--- setL :: (Lens a b) -> b -> a -> a
--- modL :: (Lens a b) -> (b -> b) -> a -> a
--- app :: SnapletInit App App
--- snapletConfig :: Lens (Snaplet a) SnapletConfig
--- snapletValue :: Lens (Snaplet a) a
-
-{-
- getMongoDB :: app -> MongoDB
- getMongoDB = getL (snapletValue . database)
-
--- | translate as
---   MonadState App (Handler App App)
---   thus: `get` could be used for getting `App` instances inside `Handler b v` monad.
--- 
-instance MonadState v (Handler b v) where
-    get = getsSnapletState _snapletValue
-    put v = modifySnapletState (setL snapletValue v)
-
-
---
-with
-withTop
-  at first grance, there have same type signature. 
-  so any differences?? dig into detail but not understand it yet.
--}
