@@ -4,8 +4,12 @@
 snaplet-oauth
 =============
 
-  1. make init-key
-  2. make install
+
+Installation
+=============
+  
+  1. update keys value in `data` directory
+  2. `make init-keys init rebuild`
 
 test
 =============

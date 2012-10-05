@@ -11,6 +11,9 @@ init:
 	cabal update
 	$(CDEV) install
 
+init-keys:
+	cp data/Weibo.Key.hs src/Snap/Snaplet/OAuth/Weibo/Key.hs
+
 clean:
 	rm -rf $(DIST)
 	rm -rf ./cabal-dev/lib/snaplet-oauth*
@@ -37,10 +40,9 @@ install: build
 test: build-test
 	$(CDEV) test
 
-example:
-	cd example/ && $(CDEV) --sandbox ../cabal-dev configure build
+demo:
+	cd example && make clean prev
 
-#	cd example/ && runghc -package-conf=../cabal-dev/packages-7.4.1.conf/ snap.hs -b 127.0.0.1 -p 9988
 
 local:
 	rm -rf ./cabal-dev/lib/hoauth*
@@ -48,3 +50,6 @@ local:
 	rm -f ./cabal-dev/packages-7.4.1.conf/hoauth2-*
 	$(CDEV) add-source ../hoauth2
 	$(CDEV) install
+
+## 
+## cd example/ && runghc -package-conf=../cabal-dev/packages-7.4.1.conf/ snap.hs -b 127.0.0.1 -p 9988
