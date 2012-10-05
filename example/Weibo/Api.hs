@@ -29,7 +29,7 @@ import Utils
 
 ---------------------------------------------------------------
 
--- | Fetch
+-- | User ID
 -- 
 requestUid :: OAuth2
            -> IO (Maybe WeiboUserId)

@@ -21,8 +21,11 @@
     <h2>1. Login</h2>
     <a href="/weibo">Login with Weibo</a> 
 
-    <h2>2. Post new and see raw result</h2>
-    <form action="/postnew" method="POST"> 
+    <h2>2.1 Show User Raw Info</h2>
+    <a href="/weibo/account">Weibo Account</a> 
+    
+    <h2>2.2 Post new and see raw result</h2>
+    <form action="/weibo/new" method="POST"> 
         <textarea name="content" row="3" />
         <input type="submit" value="post" name="submit" >
     </form> 

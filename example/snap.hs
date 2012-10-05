@@ -69,52 +69,55 @@ type AppHandler = Handler App App
 ------------------------------------------------------------------------------
 
 weiboOAuth :: OAuth2
-weiboOAuth = weiboKey { oauthOAuthorizeEndpoint = "https://api.weibo.com/oauth2/authorize"
-                      , oauthAccessTokenEndpoint = "https://api.weibo.com/oauth2/access_token" 
-                      , oauthAccessToken = Nothing
-                      }
+weiboOAuth = weiboKey
 
 taobaoOAuth :: OAuth2
-taobaoOAuth = taobaoKey { oauthOAuthorizeEndpoint = "https://oauth.taobao.com/authorize"
-                      , oauthAccessTokenEndpoint = "https://oauth.taobao.com/token" 
-                      , oauthAccessToken = Nothing
-                      }
+taobaoOAuth = taobaoKey
 
 decodedParam :: MonadSnap m => ByteString -> m ByteString
 decodedParam p = fromMaybe "" <$> getParam p
 
 ------------------------------------------------------------------------------
+--              Weibo
+------------------------------------------------------------------------------
 
-loginWithWeiboHandler :: Handler App App ()
-loginWithWeiboHandler = loginWithOauth Nothing
+loginWithWeiboH :: Handler App App ()
+loginWithWeiboH = loginWithOauth Nothing
 
 
-weiboCallbackHandler :: Handler App App ()
-weiboCallbackHandler = oauthCallbackHandler (Just "/")
+weiboCallbackH :: Handler App App ()
+weiboCallbackH = oauthCallbackHandler (Just "/")
 
 -- | Show Account detail info.
-accountShowHandler :: Handler App App ()
-accountShowHandler = do
+-- 
+accountShowH :: Handler App App ()
+accountShowH = do
   oauth <- readOAuthMVar
-  redirectToLogin oauth
+  checkLogin oauth
   maybeUID <- liftIO $ requestUid oauth
   case maybeUID of
-    Just uid  ->  (writeText . lbsToText) =<< liftIO (requestAccount oauth uid)
+    Just uid  ->  modifyResponse (setContentType "application/json")
+                  >> liftIO (requestAccount oauth uid)
+                  >>= (writeText . lbsToText)
     _         ->  writeBS "Failed at getting UID."
 
-postnewHandler:: Handler App App ()
-postnewHandler = do
+-- | Post a new msg.
+--
+postnewH:: Handler App App ()
+postnewH = do
   oauth <- readOAuthMVar
-  redirectToLogin oauth
+  checkLogin oauth
   content <- decodedParam "content"
   rsp <- liftIO $ postNew content oauth
   writeLBS rsp 
 
 ----------------------------------------------------------------------------
+--              Taobao
+------------------------------------------------------------------------------
 
 
-loginWithTaobaoHandler :: Handler App App ()
-loginWithTaobaoHandler = loginWithOauth Nothing
+loginWithTaobaoH :: Handler App App ()
+loginWithTaobaoH = loginWithOauth Nothing
 
 taobaoUserGetH :: Handler App App ()
 taobaoUserGetH = readOAuthMVar >>= liftIO . taobaoUserGet >>= writeLBS
@@ -127,26 +130,26 @@ taobaoUserGetH = readOAuthMVar >>= liftIO . taobaoUserGet >>= writeLBS
 --
 -- FIXME: better to notice user that redirect to login via weibo.
 -- 
-redirectToLogin :: OAuth2 -> Handler App App ()
-redirectToLogin oa = when (isNothing $ oauthAccessToken oa) $ redirect "weibo"
+checkLogin :: OAuth2 -> Handler App App ()
+checkLogin oa = when (isNothing $ oauthAccessToken oa) $ redirect "weibo"
 
 
-showOAuthDataHandler :: Handler App App ()
-showOAuthDataHandler = readOAuthMVar >>= writeText . T.pack . show
+showOAuthDataH :: Handler App App ()
+showOAuthDataH = readOAuthMVar >>= writeText . T.pack . show
 
 
 ------------------------------------------------------------------------------
 
 -- | The application's routes.
 routes :: [(ByteString, Handler App App ())]
-routes  = [ ("", with heist heistServe)
-          , ("/weibo"        , loginWithWeiboHandler)
-          , ("/postnew"  , postnewHandler)
-          , ("/accountShow"  , accountShowHandler)
-          , ("/taobao"        , loginWithTaobaoHandler)
-          , ("/taobao/user"        , taobaoUserGetH)
-          , ("/oauthCallback", weiboCallbackHandler)
-          , ("/test", showOAuthDataHandler)
+routes  = [ ("/weibo"        , loginWithWeiboH)
+          , ("/weibo/new"      , postnewH)
+          , ("/weibo/account"  , accountShowH)
+          , ("/taobao"       , loginWithTaobaoH)
+          , ("/taobao/user"  , taobaoUserGetH)
+          , ("/oauthCallback", weiboCallbackH)
+          , ("/test"         , showOAuthDataH)
+          , ("", with heist heistServe)
           ]
 
 -- | The application initializer.

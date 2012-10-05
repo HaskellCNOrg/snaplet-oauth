@@ -3,6 +3,8 @@ HC=ghc
 DIST=dist
 CDEV=cabal-dev
 
+.PHONY: example test
+
 default: build
 
 init:
@@ -32,8 +34,8 @@ install: build
 test: build-test
 	$(CDEV) test
 
-test-demo:
-	cd test/ && runghc -package-conf=../cabal-dev/packages-7.4.1.conf/ snap.hs -b 127.0.0.1 -p 9988
+example:
+	cd example/ && runghc -package-conf=../cabal-dev/packages-7.4.1.conf/ snap.hs -b 127.0.0.1 -p 9988
 
 local:
 	rm -rf ./cabal-dev/lib/hoauth*
