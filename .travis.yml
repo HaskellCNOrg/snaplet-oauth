@@ -1,3 +1,4 @@
 language: haskell
+script: init-keys rebuild test
 notifications:
   email: false
