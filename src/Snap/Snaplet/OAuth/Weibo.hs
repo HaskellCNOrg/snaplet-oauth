@@ -4,8 +4,9 @@
 
 module Snap.Snaplet.OAuth.Weibo
        ( routes
-       , userIdH
+       , loginWithWeiboH
        , weiboCallbackH
+       , userIdH
        , accountShowH
        , module Snap.Snaplet.OAuth.Weibo.Api
        , module Snap.Snaplet.OAuth.Weibo.Key
@@ -32,10 +33,14 @@ import           Snap.Snaplet.OAuth.Weibo.Key
 loginWithWeiboH :: HasOauth b => Handler b v ()
 loginWithWeiboH = loginWithOauthH weiboKey Nothing
 
-
+-- | token access callback.
+--   return a @OAuth2@ having access token has been filled.
+--
 weiboCallbackH :: HasOauth b => Handler b v OAuth2
 weiboCallbackH = oauthCallbackH weiboKey
 
+-- | userID is must for access other datas.
+--
 userIdH :: HasOauth b => OAuth2 -> Handler b v (Maybe WeiboUserId)
 userIdH = liftIO . requestUid
 
@@ -45,7 +50,7 @@ accountShowH :: HasOauth b
                 => (Maybe WeiboUser -> Handler b v ())
                 -> OAuth2
                 -> Handler b v ()
-accountShowH fn oauth = do
+accountShowH fn oauth =
     userIdH oauth >>= maybe failure success
     where success uid = liftIO (requestAccount oauth uid) >>= fn
           failure = writeBS "Failed at getting UID."
@@ -55,7 +60,7 @@ accountShowH fn oauth = do
 
 -- | The application's routes.
 routes :: HasOauth b => [(ByteString, Handler b v ())]
-routes  = [ ("/weibo"        , loginWithWeiboH)
+routes  = [ ("/weibo" , loginWithWeiboH)
           ]
 
 

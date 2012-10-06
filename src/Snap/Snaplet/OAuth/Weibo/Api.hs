@@ -4,12 +4,12 @@
 module Snap.Snaplet.OAuth.Weibo.Api where
 
 import           Data.Aeson
-import Data.Text (Text)
-import Data.Maybe (fromMaybe)
-import qualified Data.ByteString                as BS
-import qualified Network.HTTP.Types             as HT
+import qualified Data.ByteString          as BS
+import           Data.Maybe               (fromMaybe)
+import           Data.Text                (Text)
+import qualified Network.HTTP.Types       as HT
 import           Network.OAuth2.OAuth2
-import Snap
+import           Snap
 import           Snap.Snaplet.OAuth.Utils
 
 ----------------------------------------------------------------------
@@ -19,10 +19,10 @@ import           Snap.Snaplet.OAuth.Utils
 -- | UID data type
 data WeiboUserId = WeiboUserId { weiboUserId :: Integer } deriving (Show, Eq)
 
-data WeiboUser = WeiboUser { wUidStr :: Text
+data WeiboUser = WeiboUser { wUidStr      :: Text
                            , wScreenNname :: Text
-                           , wName :: Text
-                           , wUrl :: Text 
+                           , wName        :: Text
+                           , wUrl         :: Text
                            } deriving (Show)
 -- | Parse UID response
 --
@@ -31,7 +31,7 @@ instance FromJSON WeiboUserId where
     parseJSON _ = mzero
 
 instance FromJSON WeiboUser where
-    parseJSON (Object o) = WeiboUser 
+    parseJSON (Object o) = WeiboUser
                           <$> o .: "idstr"
                           <*> o .: "screen_name"
                           <*> o .: "name"
@@ -55,7 +55,7 @@ requestAccount :: OAuth2 -> WeiboUserId -> IO (Maybe WeiboUser)
 requestAccount oa uid = apiRequest uri
     where uri = accountShowUri `BS.append` query
           query = HT.renderSimpleQuery True params
-          params = accessTokenToParam token ++ uidToParam uid 
+          params = accessTokenToParam token ++ uidToParam uid
           token = fromMaybe "" (oauthAccessToken oa)
 
 uidToParam :: WeiboUserId -> [(BS.ByteString, BS.ByteString)]

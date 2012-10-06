@@ -30,8 +30,9 @@ import           Snap.Snaplet.OAuth.Types
 ------------------------------------------------------------------------------
 
 -- | FIXME: How to support multiple scope??
+--   according to OAuth 2.0 playround, multiple scope is supposed.
 --   BS.intercalate "+"  scopes)] **does not work**
---   scopes = [googleScopeEmail, googleScopeUserInfo]
+--   scopes = [googleScopeEmail, googleScopeUserInfo] **in order to get email**
 --
 loginWithGoogleH :: HasOauth b => Handler b v ()
 loginWithGoogleH = loginWithOauthH googleKey scopeParam

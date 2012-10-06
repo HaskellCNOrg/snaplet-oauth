@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Snap.Snaplet.OAuth
        ( initOauthSnaplet ) where
@@ -14,10 +14,14 @@ import qualified Snap.Snaplet.OAuth.Weibo  as W
 
 -- | Init this OAuthSnaplet snaplet.
 --
-initOauthSnaplet :: HasOauth b => SnapletInit b OAuthSnaplet
-initOauthSnaplet = makeSnaplet "OAuthSnaplet" "" Nothing $ do
-        addRoutes routes
-        return emptyOAuthSnaplet
+initOauthSnaplet :: HasOauth b
+                    => Bool
+                    -- ^ Add default routes or not
+                    -> SnapletInit b OAuthSnaplet
+initOauthSnaplet rt =
+    makeSnaplet "OAuthSnaplet" "" Nothing $ do
+      when rt (addRoutes routes)
+      return emptyOAuthSnaplet
 
 
 -- | Snap Handlers

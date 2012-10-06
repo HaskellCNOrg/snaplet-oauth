@@ -1,9 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TemplateHaskell   #-}
 
-import           Test.Framework                 (defaultMain)
+import           Test.Framework (defaultMain)
 
-import           qualified Weibo as W
+import qualified Weibo          as W
 
 main :: IO ()
 main = testSuits

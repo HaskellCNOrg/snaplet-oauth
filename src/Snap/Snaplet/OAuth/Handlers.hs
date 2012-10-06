@@ -4,7 +4,7 @@
 
 module Snap.Snaplet.OAuth.Handlers
        ( loginWithOauthH
-       , oauthCallbackH) where
+       , oauthCallbackH ) where
 
 import           Control.Applicative
 import           Control.Monad.CatchIO          (throw)

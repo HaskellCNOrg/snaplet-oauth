@@ -1,11 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TemplateHaskell   #-}
 
 module Weibo where
 
 import           Data.Aeson                     (decode)
 import qualified Data.ByteString.Lazy.Char8     as BSL
-import           Data.Maybe                     (isJust, fromJust)
+import           Data.Maybe                     (fromJust, isJust)
 import           Test.Framework                 (Test, defaultMain, testGroup)
 import           Test.Framework.Providers.HUnit (testCase)
 import           Test.HUnit                     ((@?), (@?=))
@@ -15,8 +14,8 @@ import           Snap.Snaplet.OAuth.Weibo
 
 uidTests :: Test
 uidTests = testGroup "uid test cases"
-                     [ testCase "uid shall be 12345" $ getUid @?= (Just aOid)
-                     , testCase "uid shall be 2709495807" $ getUid2 @?= (Just aOid2)
+                     [ testCase "uid shall be 12345" $ getUid @?= Just aOid
+                     , testCase "uid shall be 2709495807" $ getUid2 @?= Just aOid2
                      , testCase "uid shall be any number" $ isJust getUid @? "uid any number test"
                      , testCase "uid is not string" $ getInvalidUid @?= Nothing
                      , testCase "uidstr is string" $ getIdStr @?= "1814581760"
@@ -51,4 +50,4 @@ userInfo :: Maybe WeiboUser
 userInfo = decode userInfoStr
 
 userInfoStr :: BSL.ByteString
-userInfoStr = BSL.pack $  "{\"id\": 1814581760, \"idstr\": \"1814581760\", \"screen_name\": \"HaishengWoo\", \"name\": \"HaishengWoo\", \"url\": \"http://freizl.github.com/\" }"
+userInfoStr = BSL.pack  "{\"id\": 1814581760, \"idstr\": \"1814581760\", \"screen_name\": \"HaishengWoo\", \"name\": \"HaishengWoo\", \"url\": \"http://freizl.github.com/\" }"

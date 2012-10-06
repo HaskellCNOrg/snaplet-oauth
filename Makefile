@@ -2,8 +2,10 @@
 HC=ghc
 DIST=dist
 CDEV=cabal-dev
+STYLE=stylish-haskell
 
-.PHONY: clean test
+
+.PHONY: clean test hlint
 
 default: build
 
@@ -19,6 +21,10 @@ clean:
 	rm -rf ./cabal-dev/lib/snaplet-oauth*
 	rm -rf ./cabal-dev/packages/snaplet-oauth*
 	rm -f ./cabal-dev/packages-7.4.1.conf/snaplet-oauth-*
+
+hlint:
+	hlint src/ test/ --report=$(DIST)/hlint.html
+	find src test example -name '*.hs' | xargs $(STYLE) -i 
 
 conf:
 	$(CDEV) configure
