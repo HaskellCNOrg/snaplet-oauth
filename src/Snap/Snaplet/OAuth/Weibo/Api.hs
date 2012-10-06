@@ -3,29 +3,59 @@
 
 module Snap.Snaplet.OAuth.Weibo.Api where
 
-import qualified Data.ByteString                as BS
---import qualified Data.Text.Encoding as T
---import qualified Data.Text as T
 import           Control.Applicative            ((<$>))
 import           Control.Exception
+import           Control.Monad                  (mzero)
 import           Data.Aeson
+import qualified Data.ByteString                as BS
 import qualified Data.ByteString.Char8          as BS8
 import qualified Data.ByteString.Lazy.Char8     as BSL
 import           Data.Maybe                     (fromJust)
 import           Network.HTTP.Conduit
-import           Network.HTTP.Types             (renderSimpleQuery)
 import qualified Network.HTTP.Types             as HT
---import Control.Monad.Trans (liftIO)
---import Control.Monad.IO.Class (MonadIO)
-
 import           Network.OAuth2.HTTP.HttpClient
 import           Network.OAuth2.OAuth2
 
 import           Snap.Snaplet.OAuth.Utils
-import           Snap.Snaplet.OAuth.Weibo.Types
+
+----------------------------------------------------------------------
+--  Weibo User ID
+----------------------------------------------------------------------
+
+-- | UID data type
+data WeiboUserId = WeiboUserId { weiboUserId :: Integer } deriving (Show, Eq)
+
+-- | Parse UID response
+--
+instance FromJSON WeiboUserId where
+    parseJSON (Object o) = WeiboUserId <$> o .: "uid"
+    parseJSON _ = mzero
 
 
----------------------------------------------------------------
+-- | Append uid for other API request
+--
+uidToParam :: WeiboUserId -> [(BS.ByteString, BS.ByteString)]
+uidToParam (WeiboUserId uid) = [("uid", intToByteString uid)]
+
+
+----------------------------------------------------------------------
+--  API URI
+----------------------------------------------------------------------
+
+accountUidUri :: BS.ByteString
+accountUidUri = sToBS "https://api.weibo.com/2/account/get_uid.json"
+
+accountShowUri :: BS.ByteString
+accountShowUri = sToBS "https://api.weibo.com/2/users/show.json"
+
+accountStatusUpdate :: String
+accountStatusUpdate ="https://api.weibo.com/2/statuses/update.json"
+
+
+
+----------------------------------------------------------------------
+--  API
+----------------------------------------------------------------------
 
 -- | User ID
 --
@@ -46,14 +76,16 @@ requestAccount oa uid = do
           atid = (fromJust $ oauthAccessToken oa, uid)
 
 
----------------------------------------------------------------
 
+-- | Perform HTTP request
+--
 apiUrlGet2 :: URI                         -- ^ Base URI
           -> (BS.ByteString, WeiboUserId) -- ^ Authorized Access Token and UID
           -> URI                          -- ^ Combined Result
 apiUrlGet2 uri (token, uid) = uri
                               `BS.append`
-                              renderSimpleQuery True (accessTokenToParam token ++ uidToParam uid)
+                              HT.renderSimpleQuery True (accessTokenToParam token ++ uidToParam uid)
+
 
 
 handleResponse :: Response BSL.ByteString -> IO BSL.ByteString
@@ -61,8 +93,6 @@ handleResponse rsp = if (HT.statusCode . responseStatus) rsp == 200
                      then do
                           let body = responseBody rsp
                           return body
-                     else throwIO . OAuthException $ "Gaining uid failed: " ++ BSL.unpack (responseBody rsp)
-
-uidToParam :: WeiboUserId -> [(BS.ByteString, BS.ByteString)]
-uidToParam (WeiboUserId uid) = [("uid", intToByteString uid)]
+                     else throwIO . OAuthException
+                          $ "Gaining uid failed: " ++ BSL.unpack (responseBody rsp)
 

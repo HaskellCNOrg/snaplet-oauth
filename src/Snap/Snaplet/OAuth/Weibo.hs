@@ -8,7 +8,6 @@ module Snap.Snaplet.OAuth.Weibo
        , userIdH
        , weiboCallbackH
        , module Snap.Snaplet.OAuth.Weibo.Api
-       , module Snap.Snaplet.OAuth.Weibo.Types
        , module Snap.Snaplet.OAuth.Weibo.Key
        ) where
 
@@ -26,7 +25,6 @@ import           Snap.Snaplet.OAuth.Types
 import           Snap.Snaplet.OAuth.Utils
 import           Snap.Snaplet.OAuth.Weibo.Api
 import           Snap.Snaplet.OAuth.Weibo.Key
-import           Snap.Snaplet.OAuth.Weibo.Types
 
 ------------------------------------------------------------------------------
 --              Weibo

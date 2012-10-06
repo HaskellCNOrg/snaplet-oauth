@@ -28,7 +28,7 @@ Library
       Snap.Snaplet.OAuth.Handlers
       Snap.Snaplet.OAuth.Weibo
       Snap.Snaplet.OAuth.Weibo.Api
-      Snap.Snaplet.OAuth.Weibo.Types
+      --Snap.Snaplet.OAuth.Weibo.Types
 
   Other-Modules:
       Snap.Snaplet.OAuth.Utils
