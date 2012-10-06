@@ -32,17 +32,17 @@ import           Application
 ----------------------------------------------------------------------
 
 -- | Logs out and redirects the user to the site index.
-oauthCallbackH :: AppHandler ()
-oauthCallbackH = W.weiboCallbackH
-                 >> W.userIdH
-                 >>= getUserId
-                 >>= (with auth . createOAuthUser)
-                 >> redirect "/"
+weiboOauthCallbackH :: AppHandler ()
+weiboOauthCallbackH = W.weiboCallbackH
+                      >>= W.userIdH
+                      >>= getUserId
+                      >>= (with auth . createOAuthUser)
+                      >> redirect "/"
 
+-- | This function is broken since we didnt store token anywhere.
+--
 testUidH :: AppHandler ()
-testUidH = do
-    uid <- W.userIdH
-    writeText $ T.pack $ show uid
+testUidH = W.userIdH W.weiboKey >>= writeText . T.pack . show
 
 getUserId :: Maybe W.WeiboUserId -> AppHandler T.Text
 getUserId Nothing = return "Weibo User ID: Nothing Found" -- FIXME: Exception
@@ -69,7 +69,7 @@ createOAuthUser name = do
 
 googleOauthCallbackH :: AppHandler ()
 googleOauthCallbackH = G.googleCallbackH
-                 >> G.userInfoH
+                 >>= G.userInfoH
                  >>= googleUserId
 
 googleUserId :: Maybe G.GoogleUser -> AppHandler ()
@@ -83,9 +83,8 @@ googleUserId (Just user) = with auth (createOAuthUser (G.gid user))
 
 -- | The application's routes.
 routes :: [(ByteString, AppHandler ())]
-routes = [ ("/oauthCallback", oauthCallbackH)
-         , ("googleCallback", googleOauthCallbackH)
-         , ("/testuid", testUidH)
+routes = [ ("/oauthCallback", weiboOauthCallbackH)
+         , ("/googleCallback", googleOauthCallbackH)
          ]
 
 toHome = redirect "/"

@@ -2,10 +2,11 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings     #-}
 
-module Snap.Snaplet.OAuth.Handlers where
+module Snap.Snaplet.OAuth.Handlers
+       ( loginWithOauthH
+       , oauthCallbackH) where
 
 import           Control.Applicative
-import           Control.Concurrent.MVar
 import qualified Data.ByteString                as BS
 import           Data.Maybe
 import           Network.OAuth2.HTTP.HttpClient
@@ -15,44 +16,36 @@ import           Snap
 
 import           Snap.Snaplet.OAuth.Types
 
--------------------------------------------------------
--- Handlers
+----------------------------------------------------------------------
 
 -- | Login via OAuth. Redirect user for authorization.
 --
-loginWithOauth :: HasOauth b
-               => Maybe BS.ByteString
+loginWithOauthH :: HasOauth b
+               => OAuth2
+               -> Maybe BS.ByteString
                -- ^ Maybe extra query parameters,e.g., 'scope' param for google oauth.
                -> Handler b v ()
-loginWithOauth param = do
-    oauth <- readOAuthMVar
+loginWithOauthH oauth param = 
     redirect $ authorizationUrl oauth `BS.append` extraP param
     where extraP (Just x) = "&" `BS.append` x
           extraP Nothing  = ""
 
 
+----------------------------------------------------------------------
+
 -- | Callback for oauth provider.
 --
-oauthCallbackHandler :: HasOauth b
-                     => Handler b v ()
-oauthCallbackHandler = do
-    oauthSnaplet <- getOauthSnaplet
-    codeParam    <- decodedParam' (getCodeParam oauthSnaplet)
-    oauth        <- readOAuthMVar' oauthSnaplet
+oauthCallbackH :: HasOauth b
+                     => OAuth2
+                     -> Handler b v OAuth2
+oauthCallbackH oauth = do
+    codeParam    <- decodedParam' accessTokenKey
     maybeToken   <- liftIO $ requestAccessToken oauth codeParam
+    liftIO $ print maybeToken
     case maybeToken of
-        Just token -> liftIO $ modifyOAuthState token oauthSnaplet
-        _ -> writeBS "Error getting access token."
+        Just token -> liftIO $ modifyAccessToken token oauth
+        _ -> return oauth -- FIXME: throw exception
 
--- |
-defaultOAuthCallbackHandler :: HasOauth b => Handler b v ()
-defaultOAuthCallbackHandler = oauthCallbackHandler >> redirect "/"
-
--------------------------------------------------------
-
-
-modifyOAuthState :: AccessToken -> OAuthSnaplet -> IO ()
-modifyOAuthState at os = modifyMVar_ (getOauth os) (modifyAccessToken at)
 
 modifyAccessToken :: AccessToken -> OAuth2 -> IO OAuth2
 modifyAccessToken (AccessToken at) origin = return $ origin { oauthAccessToken = Just at }
@@ -61,4 +54,10 @@ modifyAccessToken (AccessToken at) origin = return $ origin { oauthAccessToken =
 decodedParam' :: MonadSnap m => BS.ByteString -> m BS.ByteString
 decodedParam' p = fromMaybe "" <$> getParam p
 
--------------------------------------------------------
+accessTokenKey :: BS.ByteString
+accessTokenKey = "code"
+
+----------------------------------------------------------------------
+
+-- checkLogin :: HasOauth b => OAuth2 -> Handler b v ()
+-- checkLogin oa = when (isNothing $ oauthAccessToken oa) $ redirect "weibo"

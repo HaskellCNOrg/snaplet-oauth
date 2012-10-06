@@ -2,7 +2,7 @@
 
 module Snap.Snaplet.OAuth.Weibo.Key where
 
-import Network.OAuth2.OAuth2
+import           Network.OAuth2.OAuth2
 
 weiboKey :: OAuth2
 weiboKey = OAuth2 {  oauthClientId = "xxxxxxxxxxxx"
@@ -13,4 +13,4 @@ weiboKey = OAuth2 {  oauthClientId = "xxxxxxxxxxxx"
                    , oauthAccessToken = Nothing
                    }
 
-                   
+

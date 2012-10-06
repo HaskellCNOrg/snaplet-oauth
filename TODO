@@ -1,8 +1,11 @@
--------------------------------------------------------
--- TODO
---
--- 1. Shoule be able to do
---     - allow multiple user login with various OAuth provider, e.g. Weibo/Google
--- 
--- 2. after login, token expired or lost, what shall do?
--- 
+
+1. Shoule be able to do
+    - allow multiple user login with various OAuth provider, e.g. Weibo/Google
+
+2. [ ] after login, token expired or lost, what shall do?
+    => redirect auth page ?
+
+3. restart server will not logout users but token has been lost.
+   => set token to cookies
+   => shall no be responsitory of this lib.
+ 
