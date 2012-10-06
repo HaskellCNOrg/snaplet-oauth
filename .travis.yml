@@ -1,4 +1,4 @@
 language: haskell
-script: "make init-keys rebuild test"
+before_script: "make init-keys"
 notifications:
   email: false
