@@ -49,6 +49,10 @@ demo:
 	cd example && make clean prev
 
 
+fun:
+	cloc src
+	cloc tests
+
 local:
 	rm -rf ./cabal-dev/lib/hoauth*
 	rm -rf ./cabal-dev/packages/hoauth*
