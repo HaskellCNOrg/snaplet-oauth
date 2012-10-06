@@ -1,6 +1,4 @@
-{-# LANGUAGE FlexibleInstances     #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Snap.Snaplet.OAuth.Handlers
        ( loginWithOauthH
@@ -26,10 +24,13 @@ loginWithOauthH :: HasOauth b
                -> Maybe BS.ByteString
                -- ^ Maybe extra query parameters,e.g., 'scope' param for google oauth.
                -> Handler b v ()
-loginWithOauthH oauth param =
+loginWithOauthH oauth param = do
+    when (isNothing $ oauthCallback oauth) oauthNotInit
     redirect $ authorizationUrl oauth `BS.append` extraP param
     where extraP (Just x) = "&" `BS.append` x
           extraP Nothing  = ""
+          oauthNotInit = throw (OAuthException "oauth data has not been init")
+                         >> redirect "/"
 
 
 ----------------------------------------------------------------------

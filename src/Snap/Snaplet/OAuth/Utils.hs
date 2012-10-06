@@ -33,6 +33,9 @@ sToBS = T.encodeUtf8 . T.pack
 lbsToText :: LBS.ByteString -> T.Text
 lbsToText = T.decodeUtf8 . toStrickBS'
 
+textToBS :: T.Text -> BS.ByteString
+textToBS = T.encodeUtf8
+
 decodedParam :: MonadSnap m => BS.ByteString -> m BS.ByteString
 decodedParam p = fromMaybe "" <$> getParam p
 

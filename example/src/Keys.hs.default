@@ -1,0 +1,31 @@
+{-# LANGUAGE OverloadedStrings #-}
+
+module Keys where
+
+import           Snap.Snaplet.OAuth
+
+----------------------------------------------------------------------
+
+keys :: [(String, OAuth2)]
+keys  = [ ("weibo", weiboKey)
+        , ("google", googleKey) ]
+
+----------------------------------------------------------------------
+
+googleKey :: OAuth2
+googleKey = OAuth2 { oauthClientId = ""
+                   , oauthClientSecret = ""
+                   , oauthCallback = Just "http://127.0.0.1:9988/googleCallback"
+                   , oauthOAuthorizeEndpoint = "https://accounts.google.com/o/oauth2/auth"
+                   , oauthAccessTokenEndpoint = "https://accounts.google.com/o/oauth2/token"
+                   , oauthAccessToken = Nothing
+                   }
+
+weiboKey :: OAuth2
+weiboKey = OAuth2 { oauthClientId = ""
+                   , oauthClientSecret = ""
+                   , oauthCallback = Just "http://127.0.0.1:9988/oauthCallback"
+                   , oauthOAuthorizeEndpoint = "https://api.weibo.com/oauth2/authorize"
+                   , oauthAccessTokenEndpoint = "https://api.weibo.com/oauth2/access_token"
+                   , oauthAccessToken = Nothing
+                   }

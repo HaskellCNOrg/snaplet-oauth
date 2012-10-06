@@ -11,6 +11,7 @@ module Site
 ------------------------------------------------------------------------------
 import           Control.Applicative
 import           Data.ByteString                             (ByteString)
+import qualified Data.HashMap.Strict                         as M
 import           Data.Maybe
 import qualified Data.Text                                   as T
 import           Snap.Core
@@ -26,6 +27,7 @@ import           Text.Templating.Heist
 ------------------------------------------------------------------------------
 
 import           Application
+import           Keys
 import qualified OAuthHandlers                               as OA
 
 ------------------------------------------------------------------------------
@@ -94,8 +96,10 @@ app = makeSnaplet "app" "An snaplet example application." Nothing $ do
     -- the url becomes /oauth/weibo
     --                 /oauth/oauthCallback
     --
-    oa <- nestSnaplet "oauth" oauth $ initOauthSnaplet True
+    oa <- nestSnaplet "oauth" oauth $ initOauthSnaplet True oauthkeys
     addRoutes routes
     addAuthSplices auth
     return $ App h s a oa
 
+oauthkeys :: OAuthKeys
+oauthkeys = OAuthKeys $ M.fromList Keys.keys

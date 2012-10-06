@@ -5,17 +5,23 @@
 module Snap.Snaplet.OAuth.Types where
 
 import           Data.Lens.Common
-import           Prelude          hiding ((.))
+import           Network.OAuth2.OAuth2
+import           Prelude               hiding ((.))
 import           Snap
 
--------------------------------------------------------
+import           Data.HashMap.Strict   (HashMap)
+import qualified Data.HashMap.Strict   as M
+
+----------------------------------------------------------------------
+-- Snaplet
+----------------------------------------------------------------------
 
 -- |
 --
-data OAuthSnaplet = OAuthSnaplet
+data OAuthSnaplet = OAuthSnaplet { oauthKeys :: OAuthKeys }
 
 emptyOAuthSnaplet :: OAuthSnaplet
-emptyOAuthSnaplet = undefined :: OAuthSnaplet
+emptyOAuthSnaplet = OAuthSnaplet (OAuthKeys M.empty)
 
 -- | TODO: just define `getOauthSnaplet` without oauthLens
 --
@@ -27,8 +33,20 @@ emptyOAuthSnaplet = undefined :: OAuthSnaplet
 class HasOauth b where
   oauthLens :: Lens b (Snaplet OAuthSnaplet)
 
-  oauthLens' :: Lens (Snaplet b) (Snaplet OAuthSnaplet)
-  oauthLens' = subSnaplet oauthLens
-
 getOauthSnaplet :: HasOauth b => Handler b v OAuthSnaplet
 getOauthSnaplet = withTop oauthLens Snap.get
+
+getOauthKeys :: HasOauth b => Handler b v OAuthKeys
+getOauthKeys = liftM oauthKeys $ withTop oauthLens Snap.get
+
+lookupOAuthDefault :: HasOauth b => OAuth2 -> String -> Handler b v OAuth2
+lookupOAuthDefault def name = do
+    (OAuthKeys keys) <- getOauthKeys
+    return $ M.lookupDefault def name keys
+
+----------------------------------------------------------------------
+-- OAuth Keys
+----------------------------------------------------------------------
+
+
+newtype OAuthKeys = OAuthKeys (HashMap String OAuth2)

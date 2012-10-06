@@ -1,6 +1,5 @@
 {-# LANGUAGE CPP               #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RankNTypes        #-}
 
 module Snap.Snaplet.OAuth.Weibo
        ( routes
@@ -9,7 +8,6 @@ module Snap.Snaplet.OAuth.Weibo
        , userIdH
        , accountShowH
        , module Snap.Snaplet.OAuth.Weibo.Api
-       , module Snap.Snaplet.OAuth.Weibo.Key
        ) where
 
 ------------------------------------------------------------------------------
@@ -31,13 +29,15 @@ import           Snap.Snaplet.OAuth.Weibo.Key
 ------------------------------------------------------------------------------
 
 loginWithWeiboH :: HasOauth b => Handler b v ()
-loginWithWeiboH = loginWithOauthH weiboKey Nothing
+loginWithWeiboH = weiboOAuth
+                  >>= flip loginWithOauthH Nothing
+
 
 -- | token access callback.
 --   return a @OAuth2@ having access token has been filled.
 --
 weiboCallbackH :: HasOauth b => Handler b v OAuth2
-weiboCallbackH = oauthCallbackH weiboKey
+weiboCallbackH = weiboOAuth >>= oauthCallbackH
 
 -- | userID is must for access other datas.
 --
@@ -54,6 +54,10 @@ accountShowH fn oauth =
     userIdH oauth >>= maybe failure success
     where success uid = liftIO (requestAccount oauth uid) >>= fn
           failure = writeBS "Failed at getting UID."
+
+
+weiboOAuth :: HasOauth b => Handler b v OAuth2
+weiboOAuth = lookupOAuthDefault weiboKey "weibo"
 
 
 ------------------------------------------------------------------------------

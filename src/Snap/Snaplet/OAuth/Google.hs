@@ -8,7 +8,6 @@ module Snap.Snaplet.OAuth.Google
        , googleCallbackH
        , userInfoH
        , module Snap.Snaplet.OAuth.Google.Api
-       , module Snap.Snaplet.OAuth.Google.Key
        ) where
 
 ------------------------------------------------------------------------------
@@ -35,17 +34,21 @@ import           Snap.Snaplet.OAuth.Types
 --   scopes = [googleScopeEmail, googleScopeUserInfo] **in order to get email**
 --
 loginWithGoogleH :: HasOauth b => Handler b v ()
-loginWithGoogleH = loginWithOauthH googleKey scopeParam
+loginWithGoogleH = googleOAuth
+                   >>= flip loginWithOauthH scopeParam
                    where scopeParam = Just $ renderSimpleQuery False scopeQuery
                          scopeQuery = [(googleScopeKey, googleScopeUserInfo)]
 
 
 googleCallbackH :: HasOauth b => Handler b v OAuth2
-googleCallbackH = oauthCallbackH googleKey
+googleCallbackH = googleOAuth >>= oauthCallbackH
 
 
 userInfoH :: HasOauth b => OAuth2 -> Handler b v (Maybe GoogleUser)
 userInfoH = liftIO . userInfo
+
+googleOAuth :: HasOauth b => Handler b v OAuth2
+googleOAuth = lookupOAuthDefault googleKey "google"
 
 ------------------------------------------------------------------------------
 

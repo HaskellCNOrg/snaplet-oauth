@@ -22,6 +22,7 @@ import           Text.Templating.Heist
 
 import qualified Snap.Snaplet.OAuth.Google           as G
 import           Snap.Snaplet.OAuth.Handlers
+import           Snap.Snaplet.OAuth.Utils
 import qualified Snap.Snaplet.OAuth.Weibo            as W
 
 import           Application
@@ -42,8 +43,8 @@ weiboOauthCallbackH = W.weiboCallbackH
 
 -- | This function is broken since we didnt store token anywhere.
 --
-testUidH :: AppHandler ()
-testUidH = W.userIdH W.weiboKey >>= writeText . T.pack . show
+--testUidH :: AppHandler ()
+--testUidH = W.userIdH W.weiboKey >>= writeText . T.pack . show
 
 getUserId :: Maybe W.WeiboUserId -> AppHandler T.Text
 getUserId Nothing = return "Weibo User ID: Nothing Found" -- FIXME: Exception
@@ -93,7 +94,4 @@ toHome = redirect "/"
 ----------------------------------------------------------------------
 --
 ----------------------------------------------------------------------
-
-textToBS :: T.Text -> ByteString
-textToBS = T.encodeUtf8
 

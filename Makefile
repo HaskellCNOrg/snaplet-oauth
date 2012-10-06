@@ -13,9 +13,6 @@ init:
 	cabal update
 	$(CDEV) install
 
-init-keys:
-	./data/init-keys.sh
-
 clean:
 	rm -rf $(DIST)
 	rm -rf ./cabal-dev/lib/snaplet-oauth*
