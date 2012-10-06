@@ -11,8 +11,8 @@
   <li>
     <a href="/oauth/weibo">Login with Weibo</a>
   </li>
-  <!-- <li> -->
-  <!--   <a href="/oauth/weibo/account">Weibo Account</a>  -->
-  <!-- </li> -->
+  <li>
+    <a href="/oauth/google">Login with Google</a>
+  </li>
 </ol>
 

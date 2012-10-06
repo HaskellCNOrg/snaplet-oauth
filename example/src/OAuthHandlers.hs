@@ -22,19 +22,21 @@ import           Control.Monad
 
 import Snap.Snaplet.OAuth.Handlers
 import qualified Snap.Snaplet.OAuth.Weibo as W
-
-------------------------------------------------------------------------------
+import qualified Snap.Snaplet.OAuth.Google as G
 
 import           Application
 
 
-------------------------------------------------------------------------------
+----------------------------------------------------------------------
+--  Google
+----------------------------------------------------------------------
+
 -- | Logs out and redirects the user to the site index.
 oauthCallbackH :: AppHandler ()
 oauthCallbackH = W.weiboCallbackH
                  >> W.userIdH
                  >>= getUserId
-                 >>= (with auth . createWeiboUser)
+                 >>= (with auth . createOAuthUser)
                  >> redirect "/"
 
 testUidH :: AppHandler ()
@@ -51,22 +53,47 @@ showUserId uid = getUserId uid >>= writeText
 
 -- | Create new user for Weibo User to local
 -- 
-createWeiboUser :: T.Text  -- weibo userid
+createOAuthUser :: T.Text      -- ^ oauth user id
                    -> Handler App (AuthManager App) ()
-createWeiboUser name = do
+createOAuthUser name = do
     let name' = textToBS name
         passwd = ClearText name'
     exists <- usernameExists name
-    when (not exists) (createUser name name' >> return ())
-    res <- loginByUsername name' passwd True
+    unless exists (void (createUser name name'))
+    res <- loginByUsername name' passwd False
     either (liftIO . print) (const $ return ()) res
+
+----------------------------------------------------------------------
+--  Google
+----------------------------------------------------------------------
+
+googleOauthCallbackH :: AppHandler ()
+googleOauthCallbackH = G.googleCallbackH
+                 >> G.userInfoH
+                 >>= googleUserId
+
+googleUserId :: Maybe G.GoogleUser -> AppHandler ()
+googleUserId Nothing = toHome
+googleUserId (Just user) = with auth (createOAuthUser (G.gid user))
+                           >> toHome
+
+----------------------------------------------------------------------
+--  Routes
+----------------------------------------------------------------------
+
+-- | The application's routes.
+routes :: [(ByteString, AppHandler ())]
+routes = [ ("/oauthCallback", oauthCallbackH)
+         , ("googleCallback", googleOauthCallbackH)
+         , ("/testuid", testUidH)
+         ]
+
+toHome = redirect "/"
+
+----------------------------------------------------------------------
+--  
+----------------------------------------------------------------------
 
 textToBS :: T.Text -> ByteString
 textToBS = T.encodeUtf8
 
-------------------------------------------------------------------------------
--- | The application's routes.
-routes :: [(ByteString, AppHandler ())]
-routes = [ ("/oauthCallback", oauthCallbackH)
-         , ("/testuid", testUidH)
-         ]

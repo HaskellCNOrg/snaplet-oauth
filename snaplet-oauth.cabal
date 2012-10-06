@@ -26,13 +26,15 @@ Library
       Snap.Snaplet.OAuth
       Snap.Snaplet.OAuth.Types
       Snap.Snaplet.OAuth.Handlers
+      Snap.Snaplet.OAuth.Utils
       Snap.Snaplet.OAuth.Weibo
-      Snap.Snaplet.OAuth.Weibo.Api
-      --Snap.Snaplet.OAuth.Weibo.Types
+      Snap.Snaplet.OAuth.Google
 
   Other-Modules:
-      Snap.Snaplet.OAuth.Utils
       Snap.Snaplet.OAuth.Weibo.Key
+      Snap.Snaplet.OAuth.Weibo.Api
+      Snap.Snaplet.OAuth.Google.Key
+      Snap.Snaplet.OAuth.Google.Api
 
   Build-Depends:    
       base                 >= 4     && < 5,
