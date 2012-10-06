@@ -37,6 +37,8 @@ rebuild: clean build
 install: build
 	$(CDEV) install
 
+reinstall: clean install
+
 test: build-test
 	$(CDEV) test
 

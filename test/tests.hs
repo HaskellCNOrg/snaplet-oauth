@@ -1,47 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell   #-}
 
-import           Data.Aeson                     (decode)
-import qualified Data.ByteString.Lazy.Char8     as BSL
-import           Data.Maybe                     (isJust)
-import           Test.Framework                 (Test, defaultMain, testGroup)
-import           Test.Framework.Providers.HUnit (testCase)
-import           Test.HUnit                     ((@?), (@?=))
+import           Test.Framework                 (defaultMain)
 
-import           Snap.Snaplet.OAuth.Weibo.Types
+import           qualified Weibo as W
 
 main :: IO ()
 main = testSuits
 
 testSuits :: IO ()
 testSuits = defaultMain
-            [ uidTests
+            [ W.uidTests
             ]
-
-uidTests :: Test
-uidTests = testGroup "uid test cases"
-                     [ testCase "uid shall be 12345" $ getUid @?= (Just aOid)
-                     , testCase "uid shall be 2709495807" $ getUid2 @?= (Just aOid2)
-                     , testCase "uid shall be any number" $ isJust getUid @? "uid any number test"
-                     , testCase "uid is not string" $ getInvalidUid @?= Nothing
-                     ]
-
-------------------------------------------------
-
-invalidUidString :: BSL.ByteString
-invalidUidString = "{\"uid\" : \"12345\" }"
-
-getInvalidUid :: Maybe WeiboUserId
-getInvalidUid = decode invalidUidString
-
-------------------------------------------------
-
-aOid :: WeiboUserId
-aOid = WeiboUserId 12345
-
-getUid :: Maybe WeiboUserId
-getUid = decode ("{\"uid\" : 12345 }" :: BSL.ByteString)
-
-
-aOid2 = WeiboUserId 2709495807123
-getUid2 = decode ("{\"uid\" : 2709495807123 }" :: BSL.ByteString)

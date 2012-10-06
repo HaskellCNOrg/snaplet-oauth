@@ -6,7 +6,7 @@ module Snap.Snaplet.OAuth.Weibo
        ( routes
        , userIdH
        , weiboCallbackH
-       , accountShowH         
+       , accountShowH
        , module Snap.Snaplet.OAuth.Weibo.Api
        , module Snap.Snaplet.OAuth.Weibo.Key
        ) where
@@ -16,13 +16,12 @@ import           Control.Category
 import           Control.Monad
 import           Data.ByteString              (ByteString)
 import           Data.Maybe
+import           Network.OAuth2.OAuth2
 import           Prelude                      hiding ((.))
 import           Snap
-import Network.OAuth2.OAuth2
 
 import           Snap.Snaplet.OAuth.Handlers
 import           Snap.Snaplet.OAuth.Types
-import           Snap.Snaplet.OAuth.Utils
 import           Snap.Snaplet.OAuth.Weibo.Api
 import           Snap.Snaplet.OAuth.Weibo.Key
 
@@ -41,16 +40,15 @@ userIdH :: HasOauth b => OAuth2 -> Handler b v (Maybe WeiboUserId)
 userIdH = liftIO . requestUid
 
 -- | Show Account detail info.
---   TODO: to be JSON object
 --
-accountShowH :: HasOauth b => OAuth2 -> Handler b v ()
-accountShowH oauth = do
-  maybeUID <- userIdH oauth
-  case maybeUID of
-    Just uid  ->  modifyResponse (setContentType "application/json")
-                  >> liftIO (requestAccount oauth uid)
-                  >>= (writeText . lbsToText)
-    _         ->  writeBS "Failed at getting UID."
+accountShowH :: HasOauth b
+                => (Maybe WeiboUser -> Handler b v ())
+                -> OAuth2
+                -> Handler b v ()
+accountShowH fn oauth = do
+    userIdH oauth >>= maybe failure success
+    where success uid = liftIO (requestAccount oauth uid) >>= fn
+          failure = writeBS "Failed at getting UID."
 
 
 ------------------------------------------------------------------------------

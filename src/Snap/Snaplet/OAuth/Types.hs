@@ -5,7 +5,7 @@
 module Snap.Snaplet.OAuth.Types where
 
 import           Data.Lens.Common
-import           Prelude                 hiding ((.))
+import           Prelude          hiding ((.))
 import           Snap
 
 -------------------------------------------------------

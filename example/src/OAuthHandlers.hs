@@ -34,10 +34,11 @@ import           Application
 -- | Logs out and redirects the user to the site index.
 weiboOauthCallbackH :: AppHandler ()
 weiboOauthCallbackH = W.weiboCallbackH
-                      >>= W.userIdH
-                      >>= getUserId
-                      >>= (with auth . createOAuthUser)
-                      >> redirect "/"
+                      >>= W.accountShowH success
+                      where success Nothing = writeBS "No user info found"
+                            success (Just usr) = do
+                                with auth $ createOAuthUser $ W.wUidStr usr
+                                writeText $ T.pack $ show usr
 
 -- | This function is broken since we didnt store token anywhere.
 --

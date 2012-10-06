@@ -13,16 +13,12 @@ Google OAuth 2.0 playround: https://developers.google.com/oauthplayground/
 module Snap.Snaplet.OAuth.Google.Api where
 
 import qualified Data.ByteString                as BS
-import qualified Data.ByteString.Char8          as BS8
-
 import           Control.Applicative
 import           Control.Monad                  (mzero)
 import           Data.Aeson
 import           Data.Text                      (Text)
 
-import           Network.OAuth2.HTTP.HttpClient
 import           Network.OAuth2.OAuth2
-import           Snap.Snaplet.OAuth.Google.Key
 import           Snap.Snaplet.OAuth.Utils
 
 
@@ -49,18 +45,8 @@ instance FromJSON GoogleUser where
 ----------------------------------------------------------------------
 
 
-userInfo :: GoogleOAuth -> IO (Maybe GoogleUser)
-userInfo oa =  doSimpleGetRequest (BS8.unpack url)
-              >>= fmap decode .  handleResponse
-              where url = appendAccessToken uriUserInfor (key oa)
-
-
-                          --`BS.append` HT.renderSimpleQuery True params
---                    params = [("access_token", token)]
---                    token = case oauthAccessToken (key oa) of
---                              Just x  -> x
---                              Nothing -> ""
-
+userInfo :: OAuth2 -> IO (Maybe GoogleUser)
+userInfo = apiRequestOAuth uriUserInfor
 
 
 
@@ -89,11 +75,11 @@ uriUserInfor = "https://www.googleapis.com/oauth2/v2/userinfo"
 samples - userinfo
 
 {
- "id": "103351924087869283689",
+ "id": "xxxxxxxxxxx",
  "name": "Haisheng Wu",
  "given_name": "Haisheng",
  "family_name": "Wu",
- "link": "https://plus.google.com/103351924087869283689",
+ "link": "https://plus.google.com/xxxxxxxxxxxxx",
  "picture": "https://lh3.googleusercontent.com/-jDSzU-Od2IA/AAAAAAAAAAI/AAAAAAAABsM/aAN1D9g0u5g/photo.jpg",
  "gender": "male",
  "locale": "en"

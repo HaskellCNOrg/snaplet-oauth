@@ -3,17 +3,13 @@
 
 module Snap.Snaplet.OAuth.Weibo.Api where
 
-import           Control.Applicative            ((<$>))
-import           Control.Monad                  (mzero)
 import           Data.Aeson
+import Data.Text (Text)
+import Data.Maybe (fromMaybe)
 import qualified Data.ByteString                as BS
-import qualified Data.ByteString.Char8          as BS8
-import qualified Data.ByteString.Lazy.Char8     as BSL
-import           Data.Maybe                     (fromJust)
 import qualified Network.HTTP.Types             as HT
-import           Network.OAuth2.HTTP.HttpClient
 import           Network.OAuth2.OAuth2
-
+import Snap
 import           Snap.Snaplet.OAuth.Utils
 
 ----------------------------------------------------------------------
@@ -23,10 +19,23 @@ import           Snap.Snaplet.OAuth.Utils
 -- | UID data type
 data WeiboUserId = WeiboUserId { weiboUserId :: Integer } deriving (Show, Eq)
 
+data WeiboUser = WeiboUser { wUidStr :: Text
+                           , wScreenNname :: Text
+                           , wName :: Text
+                           , wUrl :: Text 
+                           } deriving (Show)
 -- | Parse UID response
 --
 instance FromJSON WeiboUserId where
     parseJSON (Object o) = WeiboUserId <$> o .: "uid"
+    parseJSON _ = mzero
+
+instance FromJSON WeiboUser where
+    parseJSON (Object o) = WeiboUser 
+                          <$> o .: "idstr"
+                          <*> o .: "screen_name"
+                          <*> o .: "name"
+                          <*> o .: "url"
     parseJSON _ = mzero
 
 
@@ -37,20 +46,17 @@ instance FromJSON WeiboUserId where
 -- | User ID
 --
 requestUid :: OAuth2 -> IO (Maybe WeiboUserId)
-requestUid oa = doSimpleGetRequest
-                (BS8.unpack $ appendAccessToken accountUidUri oa)
-                >>= fmap decode . handleResponse
+requestUid = apiRequestOAuth accountUidUri
 
 
 -- | User Info
 --
-requestAccount :: OAuth2 -> WeiboUserId -> IO BSL.ByteString
-requestAccount oa uid =
-    doSimpleGetRequest uri >>= handleResponse
-    where uri = BS8.unpack query
-          token = fromJust $ oauthAccessToken oa
+requestAccount :: OAuth2 -> WeiboUserId -> IO (Maybe WeiboUser)
+requestAccount oa uid = apiRequest uri
+    where uri = accountShowUri `BS.append` query
           query = HT.renderSimpleQuery True params
-          params = accessTokenToParam token ++ uidToParam uid
+          params = accessTokenToParam token ++ uidToParam uid 
+          token = fromMaybe "" (oauthAccessToken oa)
 
 uidToParam :: WeiboUserId -> [(BS.ByteString, BS.ByteString)]
 uidToParam (WeiboUserId uid) = [("uid", intToByteString uid)]
@@ -66,8 +72,14 @@ accountUidUri = sToBS "https://api.weibo.com/2/account/get_uid.json"
 accountShowUri :: BS.ByteString
 accountShowUri = sToBS "https://api.weibo.com/2/users/show.json"
 
-accountStatusUpdate :: String
-accountStatusUpdate ="https://api.weibo.com/2/statuses/update.json"
 
-
-
+{-
+part of user info
+  {
+    "id": 1814581760,
+    "idstr": "1814581760",
+    "screen_name": "HaishengWoo",
+    "name": "HaishengWoo",
+    "url": "http://freizl.github.com/",
+  }
+-}

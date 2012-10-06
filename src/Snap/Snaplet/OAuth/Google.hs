@@ -13,7 +13,6 @@ module Snap.Snaplet.OAuth.Google
 
 ------------------------------------------------------------------------------
 import           Control.Category
-import           Control.Monad
 import           Data.ByteString               (ByteString)
 import           Data.Maybe
 import           Network.HTTP.Types            (renderSimpleQuery)
@@ -27,7 +26,7 @@ import           Snap.Snaplet.OAuth.Handlers
 import           Snap.Snaplet.OAuth.Types
 
 ------------------------------------------------------------------------------
---              Weibo
+--              Google
 ------------------------------------------------------------------------------
 
 -- | FIXME: How to support multiple scope??
@@ -43,12 +42,9 @@ loginWithGoogleH = loginWithOauthH googleKey scopeParam
 googleCallbackH :: HasOauth b => Handler b v OAuth2
 googleCallbackH = oauthCallbackH googleKey
 
-oauthToGoogleOAuth :: HasOauth b => OAuth2 -> Handler b v GoogleOAuth
-oauthToGoogleOAuth = return . GoogleOAuth 
 
 userInfoH :: HasOauth b => OAuth2 -> Handler b v (Maybe GoogleUser)
-userInfoH oauth = oauthToGoogleOAuth oauth
-                  >>= liftIO . userInfo
+userInfoH = liftIO . userInfo
 
 ------------------------------------------------------------------------------
 
