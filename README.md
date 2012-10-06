@@ -9,7 +9,7 @@ Installation
 =============
   
   1. update keys value in `data` directory
-  2. `make init-keys init rebuild`
+  2. `make init rebuild`
 
 test
 =============
