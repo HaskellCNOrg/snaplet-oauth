@@ -12,7 +12,7 @@ init:
 	$(CDEV) install
 
 init-keys:
-	cp data/Weibo.Key.hs src/Snap/Snaplet/OAuth/Weibo/Key.hs
+	./data/init-keys.sh
 
 clean:
 	rm -rf $(DIST)
