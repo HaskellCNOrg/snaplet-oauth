@@ -1,7 +1,6 @@
 {-# LANGUAGE CPP               #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RankNTypes        #-}
-{-# LANGUAGE TemplateHaskell   #-}
 
 module Snap.Snaplet.OAuth.Google
        ( routes
@@ -18,9 +17,9 @@ import           Control.Monad
 import           Data.ByteString               (ByteString)
 --import qualified Data.ByteString               as BS
 import           Data.Maybe
+import           Network.HTTP.Types            (renderSimpleQuery)
 import           Prelude                       hiding ((.))
 import           Snap
-import Network.HTTP.Types (renderSimpleQuery)
 
 import           Snap.Snaplet.OAuth.Google.Api
 import           Snap.Snaplet.OAuth.Google.Key
@@ -53,7 +52,7 @@ userInfoH = oauthToGoogleOAuth
 ------------------------------------------------------------------------------
 
 -- | The application's routes.
+--
 routes :: HasOauth b => [(ByteString, Handler b v ())]
 routes  = [ ("/google"        , loginWithGoogleH)
-          , ("/google/oauthCallback", googleCallbackH)
           ]

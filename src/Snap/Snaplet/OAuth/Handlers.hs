@@ -26,7 +26,7 @@ loginWithOauth :: HasOauth b
                -> Handler b v ()
 loginWithOauth param = do
     oauth <- readOAuthMVar
-    redirect $ (authorizationUrl oauth ) `BS.append` extraP param
+    redirect $ authorizationUrl oauth `BS.append` extraP param
     where extraP (Just x) = "&" `BS.append` x
           extraP Nothing  = ""
 
@@ -41,11 +41,10 @@ oauthCallbackHandler = do
     oauth        <- readOAuthMVar' oauthSnaplet
     maybeToken   <- liftIO $ requestAccessToken oauth codeParam
     case maybeToken of
-        Just token -> do
-             liftIO $ modifyOAuthState token oauthSnaplet
+        Just token -> liftIO $ modifyOAuthState token oauthSnaplet
         _ -> writeBS "Error getting access token."
 
--- | 
+-- |
 defaultOAuthCallbackHandler :: HasOauth b => Handler b v ()
 defaultOAuthCallbackHandler = oauthCallbackHandler >> redirect "/"
 

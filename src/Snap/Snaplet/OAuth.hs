@@ -6,14 +6,14 @@ module Snap.Snaplet.OAuth
        ( initOauthSnaplet ) where
 
 import           Control.Concurrent.MVar
-import qualified Data.ByteString          as BS
+import qualified Data.ByteString           as BS
 import           Data.Maybe
-import           Prelude                  hiding ((.))
+import           Prelude                   hiding ((.))
 import           Snap
 
-import           Snap.Snaplet.OAuth.Types
-import qualified Snap.Snaplet.OAuth.Weibo as W
 import qualified Snap.Snaplet.OAuth.Google as G
+import           Snap.Snaplet.OAuth.Types
+import qualified Snap.Snaplet.OAuth.Weibo  as W
 
 -------------------------------------------------------
 

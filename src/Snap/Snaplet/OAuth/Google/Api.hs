@@ -14,29 +14,25 @@ module Snap.Snaplet.OAuth.Google.Api where
 
 import qualified Data.ByteString                as BS
 import qualified Data.ByteString.Char8          as BS8
-import qualified Data.ByteString.Lazy.Char8     as BSL
 
 import           Control.Applicative
+import           Control.Monad                  (mzero)
 import           Data.Aeson
 import           Data.Text                      (Text)
-import           Network.HTTP.Conduit
-import qualified Network.HTTP.Types             as HT
---import Network.HTTP.Types (renderSimpleQuery, parseSimpleQuery)
-import           Control.Exception
-import           Control.Monad                  (mzero)
 
 import           Network.OAuth2.HTTP.HttpClient
 import           Network.OAuth2.OAuth2
 import           Snap.Snaplet.OAuth.Google.Key
+import           Snap.Snaplet.OAuth.Utils
 
 
 ----------------------------------------------------------------------
 --  APIs Impl
 ----------------------------------------------------------------------
 
-data GoogleUser = GoogleUser { gid    :: Text
-                             , gname  :: Text
-                             , glink  :: Text
+data GoogleUser = GoogleUser { gid   :: Text
+                             , gname :: Text
+                             , glink :: Text
 --                             , gemail :: Text
                              }
 
@@ -48,24 +44,24 @@ instance FromJSON GoogleUser where
 --                           <*> o .: "email"
     parseJSON _ = mzero
 
+----------------------------------------------------------------------
+--  APIs Impl
+----------------------------------------------------------------------
+
 
 userInfo :: GoogleOAuth -> IO (Maybe GoogleUser)
-userInfo oa = doSimpleGetRequest (BS8.unpack url)
+userInfo oa =  doSimpleGetRequest (BS8.unpack url)
               >>= fmap decode .  handleResponse
-              where url = uriUserInfor `BS.append` HT.renderSimpleQuery True params
-                    params = [("access_token", token)]
-                    token = case oauthAccessToken (key oa) of
-                              Just x  -> x
-                              Nothing -> ""
+              where url = appendAccessToken uriUserInfor (key oa)
 
 
-handleResponse :: Response BSL.ByteString -> IO BSL.ByteString
-handleResponse rsp = if (HT.statusCode . responseStatus) rsp == 200
-                     then do
-                          let body = responseBody rsp
-                          return body
-                     else throwIO . OAuthException
-                          $ "Gaining uid failed: " ++ BSL.unpack (responseBody rsp)
+                          --`BS.append` HT.renderSimpleQuery True params
+--                    params = [("access_token", token)]
+--                    token = case oauthAccessToken (key oa) of
+--                              Just x  -> x
+--                              Nothing -> ""
+
+
 
 
 ----------------------------------------------------------------------

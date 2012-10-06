@@ -5,24 +5,24 @@ module OAuthHandlers
 
 ------------------------------------------------------------------------------
 import           Control.Applicative
-import           Data.ByteString (ByteString)
+import           Control.Monad
+import           Control.Monad.Trans
+import           Data.ByteString                     (ByteString)
 import           Data.Maybe
-import Control.Monad.Trans
-import qualified Data.Text as T
-import qualified Data.Text.Encoding   as T
+import qualified Data.Text                           as T
+import qualified Data.Text.Encoding                  as T
 import           Snap.Core
 import           Snap.Snaplet
 import           Snap.Snaplet.Auth
 import           Snap.Snaplet.Auth.Backends.JsonFile
 import           Snap.Snaplet.Heist
+import           Snap.Snaplet.OAuth
 import           Text.Templating.Heist
-import Snap.Snaplet.OAuth
-import           Control.Monad
 
 
-import Snap.Snaplet.OAuth.Handlers
-import qualified Snap.Snaplet.OAuth.Weibo as W
-import qualified Snap.Snaplet.OAuth.Google as G
+import qualified Snap.Snaplet.OAuth.Google           as G
+import           Snap.Snaplet.OAuth.Handlers
+import qualified Snap.Snaplet.OAuth.Weibo            as W
 
 import           Application
 
@@ -52,7 +52,7 @@ showUserId :: Maybe W.WeiboUserId -> AppHandler ()
 showUserId uid = getUserId uid >>= writeText
 
 -- | Create new user for Weibo User to local
--- 
+--
 createOAuthUser :: T.Text      -- ^ oauth user id
                    -> Handler App (AuthManager App) ()
 createOAuthUser name = do
@@ -91,7 +91,7 @@ routes = [ ("/oauthCallback", oauthCallbackH)
 toHome = redirect "/"
 
 ----------------------------------------------------------------------
---  
+--
 ----------------------------------------------------------------------
 
 textToBS :: T.Text -> ByteString

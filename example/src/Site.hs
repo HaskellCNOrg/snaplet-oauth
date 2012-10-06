@@ -10,23 +10,23 @@ module Site
 
 ------------------------------------------------------------------------------
 import           Control.Applicative
-import           Data.ByteString (ByteString)
+import           Data.ByteString                             (ByteString)
 import           Data.Maybe
-import qualified Data.Text as T
+import qualified Data.Text                                   as T
 import           Snap.Core
 import           Snap.Snaplet
 import           Snap.Snaplet.Auth
 import           Snap.Snaplet.Auth.Backends.JsonFile
 import           Snap.Snaplet.Heist
+import           Snap.Snaplet.OAuth
 import           Snap.Snaplet.Session.Backends.CookieSession
 import           Snap.Util.FileServe
 import           Text.Templating.Heist
-import Snap.Snaplet.OAuth 
 
 ------------------------------------------------------------------------------
 
 import           Application
-import qualified OAuthHandlers as OA
+import qualified OAuthHandlers                               as OA
 
 ------------------------------------------------------------------------------
 -- | Render login form
@@ -88,7 +88,7 @@ app = makeSnaplet "app" "An snaplet example application." Nothing $ do
     a <- nestSnaplet "auth" auth $
            initJsonFileAuthManager defAuthSettings sess "users.json"
 
-    -- 
+    --
     -- NOTE: if defined as:
     --       oa <- nestSnaplet "oauth" oauth $ initOauthSnaplet
     -- the url becomes /oauth/weibo
