@@ -1,4 +1,5 @@
 language: haskell
-before_script: ./data/init-keys.sh
+before_script: echo "test, before script"
+after_script: echo "test, after script"
 notifications:
   email: false
