@@ -24,7 +24,7 @@ import qualified Snap.Snaplet.OAuth.Google           as G
 import qualified Snap.Snaplet.OAuth.Weibo            as W
 
 import           Application
-
+import           Splices
 
 ----------------------------------------------------------------------
 --  Google

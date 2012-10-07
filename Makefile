@@ -24,25 +24,19 @@ hlint:
 	find src tests example -name '*.hs' | xargs $(STYLE) -i 
 
 conf:
-	$(CDEV) configure
-
-conf-test:
 	$(CDEV) configure --enable-tests
 
 build: conf
 	$(CDEV) build
 
-build-test: conf-test
-	$(CDEV) build
-
 rebuild: clean build
 
 install: build
-	$(CDEV) install
+	$(CDEV) install --enable-tests
 
 reinstall: clean install
 
-test: build-test
+test: build
 	$(CDEV) test
 
 demo:
@@ -52,7 +46,8 @@ doc:
 	$(CDEV) haddock
 
 ### build before push in case compilation error
-push: rebuild
+
+push: clean build
 	git push --all
 
 fun:

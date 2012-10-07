@@ -44,11 +44,9 @@ apiRequestOAuth :: FromJSON a
               => BS.ByteString     -- ^ API URL
               -> OAuth2            -- ^ For append access token
               -> IO (Maybe a)
-apiRequestOAuth uri oa = do
-    let url = BS8.unpack $ appendAccessToken uri oa
-    apiRequestOAuth url
+apiRequestOAuth uri oa = apiRequest $ appendAccessToken uri oa
 
 apiRequest :: FromJSON a
               => BS.ByteString     -- ^ Full API URL
               -> IO (Maybe a)
-apiRequest uri = doJSONGetRequest
+apiRequest = doJSONGetRequest . BS8.unpack

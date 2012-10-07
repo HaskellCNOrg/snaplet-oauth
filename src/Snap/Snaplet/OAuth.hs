@@ -4,7 +4,6 @@ module Snap.Snaplet.OAuth
        ( initOauthSnaplet
        , module OA
        , module HS
-       , module SP
        , module UT
        , module TY ) where
 
@@ -14,7 +13,6 @@ import           Snap
 import           Network.OAuth2.OAuth2                as OA
 import qualified Snap.Snaplet.OAuth.Google            as G
 import           Snap.Snaplet.OAuth.Internal.Handlers as HS
-import           Snap.Snaplet.OAuth.Internal.Splices  as SP
 import           Snap.Snaplet.OAuth.Internal.Types    as TY
 import           Snap.Snaplet.OAuth.Internal.Utils    as UT
 import qualified Snap.Snaplet.OAuth.Weibo             as W
