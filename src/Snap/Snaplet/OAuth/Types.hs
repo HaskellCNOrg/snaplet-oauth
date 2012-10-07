@@ -1,16 +1,15 @@
-{-# LANGUAGE FlexibleInstances     #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings     #-}
 
 module Snap.Snaplet.OAuth.Types where
 
 import           Data.Lens.Common
 import           Network.OAuth2.OAuth2
-import           Prelude               hiding ((.))
+--import           Prelude               hiding ((.))
 import           Snap
-
+import Data.Hashable (Hashable(..))
 import           Data.HashMap.Strict   (HashMap)
 import qualified Data.HashMap.Strict   as M
+import Snap.Snaplet.OAuth.Utils
 
 ----------------------------------------------------------------------
 -- Snaplet
@@ -18,10 +17,10 @@ import qualified Data.HashMap.Strict   as M
 
 -- |
 --
-data OAuthSnaplet = OAuthSnaplet { oauthKeys :: OAuthKeys }
+data OAuthSnaplet = OAuthSnaplet { oauthKeys :: OAuthMap }
 
 emptyOAuthSnaplet :: OAuthSnaplet
-emptyOAuthSnaplet = OAuthSnaplet (OAuthKeys M.empty)
+emptyOAuthSnaplet = OAuthSnaplet (OAuthMap M.empty)
 
 -- | TODO: just define `getOauthSnaplet` without oauthLens
 --
@@ -36,17 +35,17 @@ class HasOauth b where
 getOauthSnaplet :: HasOauth b => Handler b v OAuthSnaplet
 getOauthSnaplet = withTop oauthLens Snap.get
 
-getOauthKeys :: HasOauth b => Handler b v OAuthKeys
+getOauthKeys :: HasOauth b => Handler b v OAuthMap
 getOauthKeys = liftM oauthKeys $ withTop oauthLens Snap.get
 
-lookupOAuthDefault :: HasOauth b => OAuth2 -> String -> Handler b v OAuth2
-lookupOAuthDefault def name = do
-    (OAuthKeys keys) <- getOauthKeys
-    return $ M.lookupDefault def name keys
+--lookupOAuthDefault :: HasOauth b => OAuth2 -> OAuthKey -> Handler b v OAuth2
+--lookupOAuthDefault def name = do
+--    (OAuthMap keys) <- getOauthKeys
+--    return $ M.lookupDefault def name keys
 
-lookupOAuth :: HasOauth b => String -> Handler b v (Maybe OAuth2)
+lookupOAuth :: HasOauth b => OAuthKey -> Handler b v (Maybe OAuthValue)
 lookupOAuth name = do
-    (OAuthKeys keys) <- getOauthKeys
+    (OAuthMap keys) <- getOauthKeys
     return $ M.lookup name keys
 
 ----------------------------------------------------------------------
@@ -54,4 +53,12 @@ lookupOAuth name = do
 ----------------------------------------------------------------------
 
 
-newtype OAuthKeys = OAuthKeys (HashMap String OAuth2)
+newtype OAuthMap = OAuthMap (HashMap OAuthKey OAuthValue)
+
+type OAuthValue = OAuth2
+
+data OAuthKey = Google | Github | Twitter | Facebook | Weibo | QQ
+                deriving (Show, Eq, Enum)
+
+instance Hashable OAuthKey where
+  hash = hash . sToBS . show

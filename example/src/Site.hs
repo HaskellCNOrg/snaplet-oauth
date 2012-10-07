@@ -101,5 +101,5 @@ app = makeSnaplet "app" "An snaplet example application." Nothing $ do
     addAuthSplices auth
     return $ App h s a oa
 
-oauthkeys :: OAuthKeys
-oauthkeys = OAuthKeys $ M.fromList Keys.keys
+oauthkeys :: OAuthMap
+oauthkeys = OAuthMap $ M.fromList Keys.keys

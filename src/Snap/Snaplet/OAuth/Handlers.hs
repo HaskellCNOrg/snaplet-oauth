@@ -20,32 +20,32 @@ import           Snap.Snaplet.OAuth.Types
 -- | Login via OAuth. Redirect user for authorization.
 --
 loginWithOauthH :: HasOauth b
-               => Maybe OAuth2
+               => OAuthKey
                -> Maybe BS.ByteString
                -- ^ Maybe extra query parameters,e.g., 'scope' param for google oauth.
                -> Handler b v ()
-loginWithOauthH Nothing _ = oauthNotInitH
-loginWithOauthH (Just oauth) param = do
-    redirect $ authorizationUrl oauth `BS.append` extraP param
+--loginWithOauthH Nothing _ = oauthNotInitH
+loginWithOauthH key param = withOAuthH key fn
     where extraP (Just x) = "&" `BS.append` x
           extraP Nothing  = ""
+          fn oauth = redirect $ authorizationUrl oauth `BS.append` extraP param
 
 ----------------------------------------------------------------------
 
 -- | Callback for oauth provider.
 --
 oauthCallbackH :: HasOauth b
-                  => Maybe OAuth2
+                  => OAuthKey
                   -> Handler b v OAuth2
-oauthCallbackH Nothing = oauthNotInitH >> return (undefined :: OAuth2)
-oauthCallbackH (Just oauth) = do
-    codeParam    <- decodedParam' accessTokenKey
-    maybeToken   <- liftIO $ requestAccessToken oauth codeParam
-    case maybeToken of
-        Just token -> liftIO $ modifyAccessToken token oauth
-        _ -> throw (OAuthException "Failed to request Access Token.")
-             >> return oauth
-
+oauthCallbackH key = withOAuthH key fn
+    where fn oauth = do
+                     codeParam  <- decodedParam' accessTokenKey
+                     maybeToken <- liftIO $ requestAccessToken oauth codeParam
+                     case maybeToken of
+                         Just token -> liftIO $ modifyAccessToken token oauth
+                         _ -> throw (OAuthException $ "Failed to request Access Token." ++ show key)
+                              >> return oauth
+    
 
 modifyAccessToken :: AccessToken -> OAuth2 -> IO OAuth2
 modifyAccessToken (AccessToken at) origin = return $ origin { oauthAccessToken = Just at }
@@ -59,9 +59,18 @@ accessTokenKey = "code"
 
 ----------------------------------------------------------------------
 
+withOAuthH :: HasOauth b
+              => OAuthKey
+              -> (OAuthValue -> Handler b v a)
+              -> Handler b v a
+withOAuthH key fn = do
+    value <- lookupOAuth key
+    case value of
+      Nothing -> failure
+      Just oauth -> fn oauth
+    where failure = throw $ OAuthException $ "oauth data has not been init of: " ++ show key
+
+
 -- checkLogin :: HasOauth b => OAuth2 -> Handler b v ()
 -- checkLogin oa = when (isNothing $ oauthAccessToken oa) $ redirect "weibo"
-
-oauthNotInitH :: HasOauth b => Handler b v ()
-oauthNotInitH = throw (OAuthException "oauth data has not been init")
 

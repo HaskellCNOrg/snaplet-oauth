@@ -22,7 +22,7 @@ import qualified Snap.Snaplet.OAuth.Weibo    as W
 initOauthSnaplet :: HasOauth b
                     => Bool
                     -- ^ Add default routes or not
-                    -> OAuthKeys
+                    -> OAuthMap
                     -- ^ Oauth Keys
                     -> SnapletInit b OAuthSnaplet
 initOauthSnaplet rt oauths =

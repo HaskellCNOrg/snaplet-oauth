@@ -28,15 +28,14 @@ import           Snap.Snaplet.OAuth.Weibo.Api
 ------------------------------------------------------------------------------
 
 loginWithWeiboH :: HasOauth b => Handler b v ()
-loginWithWeiboH = weiboOAuth
-                  >>= flip loginWithOauthH Nothing
+loginWithWeiboH = loginWithOauthH Weibo Nothing
 
 
 -- | token access callback.
 --   return a @OAuth2@ having access token has been filled.
 --
 weiboCallbackH :: HasOauth b => Handler b v OAuth2
-weiboCallbackH = weiboOAuth >>= oauthCallbackH
+weiboCallbackH = oauthCallbackH Weibo
 
 -- | userID is must for access other datas.
 --
@@ -53,10 +52,6 @@ accountShowH fn oauth =
     userIdH oauth >>= maybe failure success
     where success uid = liftIO (requestAccount oauth uid) >>= fn
           failure = writeBS "Failed at getting UID."
-
-
-weiboOAuth :: HasOauth b => Handler b v (Maybe OAuth2)
-weiboOAuth = lookupOAuth "weibo"
 
 
 ------------------------------------------------------------------------------
