@@ -1,20 +1,19 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Snap.Snaplet.OAuth.Handlers
+module Snap.Snaplet.OAuth.Internal.Handlers
        ( loginWithOauthH
        , oauthCallbackH ) where
 
-import           Control.Applicative
-import           Control.Monad.CatchIO          (throw)
-import qualified Data.ByteString                as BS
+import           Control.Monad.CatchIO             (throw)
+import qualified Data.ByteString                   as BS
 import           Data.Maybe
 import           Network.OAuth2.HTTP.HttpClient
 import           Network.OAuth2.OAuth2
-import           Prelude                        hiding ((.))
+import           Prelude                           hiding ((.))
 import           Snap
 
-import           Snap.Snaplet.OAuth.Types
-import           Snap.Snaplet.OAuth.Utils
+import           Snap.Snaplet.OAuth.Internal.Types
+import           Snap.Snaplet.OAuth.Internal.Utils
 
 ----------------------------------------------------------------------
 
@@ -39,7 +38,7 @@ oauthCallbackH :: HasOAuth b
                   -> Handler b v OAuth2
 oauthCallbackH key = withOAuthH key fn
     where fn oauth = do
-                     codeParam  <- decodedParam' accessTokenKey
+                     codeParam  <- decodedParam accessTokenKey
                      maybeToken <- liftIO $ requestAccessToken oauth codeParam
                      case maybeToken of
                          Just token -> liftIO $ modifyAccessToken token oauth

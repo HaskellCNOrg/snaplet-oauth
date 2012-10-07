@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Snap.Snaplet.OAuth.Utils where
+module Snap.Snaplet.OAuth.Internal.Utils where
 
 import           Control.Applicative
 import           Control.Exception

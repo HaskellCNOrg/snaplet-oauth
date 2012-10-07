@@ -40,17 +40,6 @@ weiboOauthCallbackH = W.weiboCallbackH
                                 --writeText $ T.pack $ show usr
                                 toHome usr
 
--- | This function is broken since we didnt store token anywhere.
---
---testUidH :: AppHandler ()
---testUidH = W.userIdH W.weiboKey >>= writeText . T.pack . show
-
---getUserId :: Maybe W.WeiboUserId -> AppHandler T.Text
---getUserId Nothing = return "Weibo User ID: Nothing Found" -- FIXME: Exception
---getUserId (Just uid) = return . T.pack . show . W.weiboUserId $ uid
---
---showUserId :: Maybe W.WeiboUserId -> AppHandler ()
---showUserId uid = getUserId uid >>= writeText
 
 -- | Create new user for Weibo User to local
 --

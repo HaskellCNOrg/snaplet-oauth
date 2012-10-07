@@ -6,18 +6,18 @@ module Snap.Snaplet.OAuth
        , module HS
        , module SP
        , module UT
-       , module Snap.Snaplet.OAuth.Types ) where
+       , module TY ) where
 
-import           Data.ByteString             (ByteString)
+import           Data.ByteString                      (ByteString)
 import           Snap
 
-import           Network.OAuth2.OAuth2       as OA
-import qualified Snap.Snaplet.OAuth.Google   as G
-import           Snap.Snaplet.OAuth.Handlers as HS
-import           Snap.Snaplet.OAuth.Splices  as SP
-import           Snap.Snaplet.OAuth.Types
-import           Snap.Snaplet.OAuth.Utils    as UT
-import qualified Snap.Snaplet.OAuth.Weibo    as W
+import           Network.OAuth2.OAuth2                as OA
+import qualified Snap.Snaplet.OAuth.Google            as G
+import           Snap.Snaplet.OAuth.Internal.Handlers as HS
+import           Snap.Snaplet.OAuth.Internal.Splices  as SP
+import           Snap.Snaplet.OAuth.Internal.Types    as TY
+import           Snap.Snaplet.OAuth.Internal.Utils    as UT
+import qualified Snap.Snaplet.OAuth.Weibo             as W
 
 -------------------------------------------------------
 

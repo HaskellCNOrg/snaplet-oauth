@@ -48,6 +48,12 @@ test: build-test
 demo:
 	cd example && make clean prev
 
+doc:
+	$(CDEV) haddock
+
+### build before push in case compilation error
+push: rebuild
+	git push --all
 
 fun:
 	cloc src

@@ -1,9 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 
-module Snap.Snaplet.OAuth.Splices where
+module Snap.Snaplet.OAuth.Internal.Splices where
 
-import           Snap.Snaplet.OAuth.Utils
+import           Snap.Snaplet.OAuth.Internal.Utils
 import           Text.Templating.Heist
 
 ----------------------------------------------------------------------

@@ -24,10 +24,10 @@ Library
   Hs-Source-Dirs: src
   Exposed-modules:     
       Snap.Snaplet.OAuth
-      Snap.Snaplet.OAuth.Types
-      Snap.Snaplet.OAuth.Handlers
-      Snap.Snaplet.OAuth.Splices
-      Snap.Snaplet.OAuth.Utils
+      Snap.Snaplet.OAuth.Internal.Types
+      Snap.Snaplet.OAuth.Internal.Handlers
+      Snap.Snaplet.OAuth.Internal.Splices
+      Snap.Snaplet.OAuth.Internal.Utils
       Snap.Snaplet.OAuth.Weibo
       Snap.Snaplet.OAuth.Google
 

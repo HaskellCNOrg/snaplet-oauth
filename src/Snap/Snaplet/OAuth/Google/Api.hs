@@ -13,13 +13,13 @@ Google OAuth 2.0 playround: https://developers.google.com/oauthplayground/
 module Snap.Snaplet.OAuth.Google.Api where
 
 import           Control.Applicative
-import           Control.Monad            (mzero)
+import           Control.Monad                     (mzero)
 import           Data.Aeson
-import qualified Data.ByteString          as BS
-import           Data.Text                (Text)
+import qualified Data.ByteString                   as BS
+import           Data.Text                         (Text)
 
 import           Network.OAuth2.OAuth2
-import           Snap.Snaplet.OAuth.Utils
+import           Snap.Snaplet.OAuth.Internal.Utils
 
 
 ----------------------------------------------------------------------

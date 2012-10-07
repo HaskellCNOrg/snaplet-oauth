@@ -12,16 +12,16 @@ module Snap.Snaplet.OAuth.Google
 
 ------------------------------------------------------------------------------
 import           Control.Category
-import           Data.ByteString               (ByteString)
+import           Data.ByteString                      (ByteString)
 import           Data.Maybe
-import           Network.HTTP.Types            (renderSimpleQuery)
-import           Prelude                       hiding ((.))
+import           Network.HTTP.Types                   (renderSimpleQuery)
+import           Prelude                              hiding ((.))
 import           Snap
 
 import           Network.OAuth2.OAuth2
 import           Snap.Snaplet.OAuth.Google.Api
-import           Snap.Snaplet.OAuth.Handlers
-import           Snap.Snaplet.OAuth.Types
+import           Snap.Snaplet.OAuth.Internal.Handlers
+import           Snap.Snaplet.OAuth.Internal.Types
 
 ------------------------------------------------------------------------------
 --              Google

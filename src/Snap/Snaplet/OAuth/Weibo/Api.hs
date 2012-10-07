@@ -4,13 +4,13 @@
 module Snap.Snaplet.OAuth.Weibo.Api where
 
 import           Data.Aeson
-import qualified Data.ByteString          as BS
-import           Data.Maybe               (fromMaybe)
-import           Data.Text                (Text)
-import qualified Network.HTTP.Types       as HT
+import qualified Data.ByteString                   as BS
+import           Data.Maybe                        (fromMaybe)
+import           Data.Text                         (Text)
+import qualified Network.HTTP.Types                as HT
 import           Network.OAuth2.OAuth2
 import           Snap
-import           Snap.Snaplet.OAuth.Utils
+import           Snap.Snaplet.OAuth.Internal.Utils
 
 ----------------------------------------------------------------------
 --  Weibo User ID

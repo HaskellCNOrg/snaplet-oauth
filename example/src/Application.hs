@@ -10,7 +10,7 @@ import           Data.Lens.Template
 import           Snap.Snaplet
 import           Snap.Snaplet.Auth
 import           Snap.Snaplet.Heist
-import           Snap.Snaplet.OAuth.Types
+import           Snap.Snaplet.OAuth.Internal.Types
 import           Snap.Snaplet.Session
 
 ------------------------------------------------------------------------------
