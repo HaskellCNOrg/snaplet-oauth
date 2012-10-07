@@ -1,7 +1,7 @@
 
 
-- [![master](https://secure.travis-ci.org/HaskellCNOrg/snaplet-oauth.png?branch=master)](http://travis-ci.org/HaskellCNOrg/snap-oauth)
-- [![branch/0.5](https://secure.travis-ci.org/HaskellCNOrg/snaplet-oauth.png?branch=branch/0.5)](http://travis-ci.org/HaskellCNOrg/snap-oauth)             
+- master: [![master](https://secure.travis-ci.org/HaskellCNOrg/snaplet-oauth.png?branch=master)](http://travis-ci.org/HaskellCNOrg/snap-oauth)
+- branch/0.5: [![branch/0.5](https://secure.travis-ci.org/HaskellCNOrg/snaplet-oauth.png?branch=branch/0.5)](http://travis-ci.org/HaskellCNOrg/snap-oauth)
 
 snaplet-oauth
 =============
