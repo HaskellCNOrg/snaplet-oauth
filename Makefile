@@ -45,6 +45,9 @@ demo:
 doc:
 	$(CDEV) haddock
 
+dist: clean build
+	$(CDEV) sdist
+
 ### build before push in case compilation error
 
 push: clean build
