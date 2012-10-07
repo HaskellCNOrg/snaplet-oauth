@@ -17,10 +17,11 @@ import           Snap.Snaplet.OAuth.Internal.Utils
 ----------------------------------------------------------------------
 
 -- | UID data type
+--   FIXME: chinese name doest display correctly
 data WeiboUserId = WeiboUserId { weiboUserId :: Integer } deriving (Show, Eq)
 
 data WeiboUser = WeiboUser { wUidStr      :: Text
-                           , wScreenNname :: Text
+                           , wScreenNname :: Text   
                            , wName        :: Text
                            , wUrl         :: Text
                            } deriving (Show)

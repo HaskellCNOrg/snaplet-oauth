@@ -47,7 +47,7 @@ oauthCallbackH key = withOAuthH key fn
 
 
 modifyAccessToken :: AccessToken -> OAuth2 -> IO OAuth2
-modifyAccessToken (AccessToken at) origin = return $ origin { oauthAccessToken = Just at }
+modifyAccessToken (AccessToken at _) origin = return $ origin { oauthAccessToken = Just at }
 
 
 accessTokenKey :: BS.ByteString
