@@ -19,7 +19,7 @@ import           Snap.Snaplet.OAuth.Types
 
 -- | Login via OAuth. Redirect user for authorization.
 --
-loginWithOauthH :: HasOauth b
+loginWithOauthH :: HasOAuth b
                => OAuthKey
                -> Maybe BS.ByteString
                -- ^ Maybe extra query parameters,e.g., 'scope' param for google oauth.
@@ -34,7 +34,7 @@ loginWithOauthH key param = withOAuthH key fn
 
 -- | Callback for oauth provider.
 --
-oauthCallbackH :: HasOauth b
+oauthCallbackH :: HasOAuth b
                   => OAuthKey
                   -> Handler b v OAuth2
 oauthCallbackH key = withOAuthH key fn
@@ -59,7 +59,7 @@ accessTokenKey = "code"
 
 ----------------------------------------------------------------------
 
-withOAuthH :: HasOauth b
+withOAuthH :: HasOAuth b
               => OAuthKey
               -> (OAuthValue -> Handler b v a)
               -> Handler b v a
@@ -71,6 +71,6 @@ withOAuthH key fn = do
     where failure = throw $ OAuthException $ "oauth data has not been init of: " ++ show key
 
 
--- checkLogin :: HasOauth b => OAuth2 -> Handler b v ()
+-- checkLogin :: HasOAuth b => OAuth2 -> Handler b v ()
 -- checkLogin oa = when (isNothing $ oauthAccessToken oa) $ redirect "weibo"
 

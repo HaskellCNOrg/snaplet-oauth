@@ -29,21 +29,21 @@ emptyOAuthSnaplet = OAuthSnaplet (OAuthMap M.empty)
 --   `getXXX = with oauth Snap.get`
 --   where the `oauth` here can be found at `data App = App { _oauth : xxxx, ....}
 --
-class HasOauth b where
+class HasOAuth b where
   oauthLens :: Lens b (Snaplet OAuthSnaplet)
 
-getOauthSnaplet :: HasOauth b => Handler b v OAuthSnaplet
+getOauthSnaplet :: HasOAuth b => Handler b v OAuthSnaplet
 getOauthSnaplet = withTop oauthLens Snap.get
 
-getOauthKeys :: HasOauth b => Handler b v OAuthMap
+getOauthKeys :: HasOAuth b => Handler b v OAuthMap
 getOauthKeys = liftM oauthKeys $ withTop oauthLens Snap.get
 
---lookupOAuthDefault :: HasOauth b => OAuth2 -> OAuthKey -> Handler b v OAuth2
+--lookupOAuthDefault :: HasOAuth b => OAuth2 -> OAuthKey -> Handler b v OAuth2
 --lookupOAuthDefault def name = do
 --    (OAuthMap keys) <- getOauthKeys
 --    return $ M.lookupDefault def name keys
 
-lookupOAuth :: HasOauth b => OAuthKey -> Handler b v (Maybe OAuthValue)
+lookupOAuth :: HasOAuth b => OAuthKey -> Handler b v (Maybe OAuthValue)
 lookupOAuth name = do
     (OAuthMap keys) <- getOauthKeys
     return $ M.lookup name keys

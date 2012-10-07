@@ -27,24 +27,24 @@ import           Snap.Snaplet.OAuth.Weibo.Api
 --              Weibo
 ------------------------------------------------------------------------------
 
-loginWithWeiboH :: HasOauth b => Handler b v ()
+loginWithWeiboH :: HasOAuth b => Handler b v ()
 loginWithWeiboH = loginWithOauthH Weibo Nothing
 
 
 -- | token access callback.
 --   return a @OAuth2@ having access token has been filled.
 --
-weiboCallbackH :: HasOauth b => Handler b v OAuth2
+weiboCallbackH :: HasOAuth b => Handler b v OAuth2
 weiboCallbackH = oauthCallbackH Weibo
 
 -- | userID is must for access other datas.
 --
-userIdH :: HasOauth b => OAuth2 -> Handler b v (Maybe WeiboUserId)
+userIdH :: HasOAuth b => OAuth2 -> Handler b v (Maybe WeiboUserId)
 userIdH = liftIO . requestUid
 
 -- | Show Account detail info.
 --
-accountShowH :: HasOauth b
+accountShowH :: HasOAuth b
                 => (Maybe WeiboUser -> Handler b v ())
                 -> OAuth2
                 -> Handler b v ()
@@ -57,7 +57,7 @@ accountShowH fn oauth =
 ------------------------------------------------------------------------------
 
 -- | The application's routes.
-routes :: HasOauth b => [(ByteString, Handler b v ())]
+routes :: HasOAuth b => [(ByteString, Handler b v ())]
 routes  = [ ("/weibo" , loginWithWeiboH)
           ]
 

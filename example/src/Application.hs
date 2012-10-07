@@ -26,7 +26,7 @@ makeLens ''App
 instance HasHeist App where
     heistLens = subSnaplet heist
 
-instance HasOauth App where
+instance HasOAuth App where
     oauthLens = oauth
 
 ------------------------------------------------------------------------------

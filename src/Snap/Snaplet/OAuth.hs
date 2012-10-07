@@ -23,7 +23,7 @@ import qualified Snap.Snaplet.OAuth.Weibo    as W
 
 -- | Init this OAuthSnaplet snaplet.
 --
-initOauthSnaplet :: HasOauth b
+initOauthSnaplet :: HasOAuth b
                     => Bool
                     -- ^ Add default routes or not
                     -> OAuthMap
@@ -37,7 +37,7 @@ initOauthSnaplet rt oauths =
 -- | Snap Handlers
 --   ?? TODO: add routes per config [weibo, google, github]
 --
-routes :: HasOauth b => [(ByteString, Handler b v ())]
+routes :: HasOAuth b => [(ByteString, Handler b v ())]
 routes = W.routes
          <|>
          G.routes
