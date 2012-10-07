@@ -22,7 +22,6 @@ import           Snap
 import           Snap.Snaplet.OAuth.Handlers
 import           Snap.Snaplet.OAuth.Types
 import           Snap.Snaplet.OAuth.Weibo.Api
-import           Snap.Snaplet.OAuth.Weibo.Key
 
 ------------------------------------------------------------------------------
 --              Weibo
@@ -56,8 +55,8 @@ accountShowH fn oauth =
           failure = writeBS "Failed at getting UID."
 
 
-weiboOAuth :: HasOauth b => Handler b v OAuth2
-weiboOAuth = lookupOAuthDefault weiboKey "weibo"
+weiboOAuth :: HasOauth b => Handler b v (Maybe OAuth2)
+weiboOAuth = lookupOAuth "weibo"
 
 
 ------------------------------------------------------------------------------

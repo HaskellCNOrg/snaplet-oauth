@@ -44,6 +44,11 @@ lookupOAuthDefault def name = do
     (OAuthKeys keys) <- getOauthKeys
     return $ M.lookupDefault def name keys
 
+lookupOAuth :: HasOauth b => String -> Handler b v (Maybe OAuth2)
+lookupOAuth name = do
+    (OAuthKeys keys) <- getOauthKeys
+    return $ M.lookup name keys
+
 ----------------------------------------------------------------------
 -- OAuth Keys
 ----------------------------------------------------------------------

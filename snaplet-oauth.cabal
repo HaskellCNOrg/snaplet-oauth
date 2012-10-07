@@ -31,9 +31,7 @@ Library
       Snap.Snaplet.OAuth.Google
 
   Other-Modules:
-      Snap.Snaplet.OAuth.Weibo.Key
       Snap.Snaplet.OAuth.Weibo.Api
-      Snap.Snaplet.OAuth.Google.Key
       Snap.Snaplet.OAuth.Google.Api
 
   Build-Depends:    

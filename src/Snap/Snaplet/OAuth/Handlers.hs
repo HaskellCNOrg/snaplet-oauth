@@ -20,27 +20,25 @@ import           Snap.Snaplet.OAuth.Types
 -- | Login via OAuth. Redirect user for authorization.
 --
 loginWithOauthH :: HasOauth b
-               => OAuth2
+               => Maybe OAuth2
                -> Maybe BS.ByteString
                -- ^ Maybe extra query parameters,e.g., 'scope' param for google oauth.
                -> Handler b v ()
-loginWithOauthH oauth param = do
-    when (isNothing $ oauthCallback oauth) oauthNotInit
+loginWithOauthH Nothing _ = oauthNotInitH
+loginWithOauthH (Just oauth) param = do
     redirect $ authorizationUrl oauth `BS.append` extraP param
     where extraP (Just x) = "&" `BS.append` x
           extraP Nothing  = ""
-          oauthNotInit = throw (OAuthException "oauth data has not been init")
-                         >> redirect "/"
-
 
 ----------------------------------------------------------------------
 
 -- | Callback for oauth provider.
 --
 oauthCallbackH :: HasOauth b
-                     => OAuth2
-                     -> Handler b v OAuth2
-oauthCallbackH oauth = do
+                  => Maybe OAuth2
+                  -> Handler b v OAuth2
+oauthCallbackH Nothing = oauthNotInitH >> return (undefined :: OAuth2)
+oauthCallbackH (Just oauth) = do
     codeParam    <- decodedParam' accessTokenKey
     maybeToken   <- liftIO $ requestAccessToken oauth codeParam
     case maybeToken of
@@ -63,3 +61,7 @@ accessTokenKey = "code"
 
 -- checkLogin :: HasOauth b => OAuth2 -> Handler b v ()
 -- checkLogin oa = when (isNothing $ oauthAccessToken oa) $ redirect "weibo"
+
+oauthNotInitH :: HasOauth b => Handler b v ()
+oauthNotInitH = throw (OAuthException "oauth data has not been init")
+

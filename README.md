@@ -1,4 +1,5 @@
 
+
 - [![branch-0.5](https://secure.travis-ci.org/HaskellCNOrg/snap-oauth.png?branch=branch/0.5)](http://travis-ci.org/HaskellCNOrg/snap-oauth)
 
 snaplet-oauth

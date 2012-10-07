@@ -20,7 +20,6 @@ import           Snap
 
 import           Network.OAuth2.OAuth2
 import           Snap.Snaplet.OAuth.Google.Api
-import           Snap.Snaplet.OAuth.Google.Key
 import           Snap.Snaplet.OAuth.Handlers
 import           Snap.Snaplet.OAuth.Types
 
@@ -47,8 +46,8 @@ googleCallbackH = googleOAuth >>= oauthCallbackH
 userInfoH :: HasOauth b => OAuth2 -> Handler b v (Maybe GoogleUser)
 userInfoH = liftIO . userInfo
 
-googleOAuth :: HasOauth b => Handler b v OAuth2
-googleOAuth = lookupOAuthDefault googleKey "google"
+googleOAuth :: HasOauth b => Handler b v (Maybe OAuth2)
+googleOAuth = lookupOAuth "google"
 
 ------------------------------------------------------------------------------
 
