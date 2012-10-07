@@ -14,9 +14,9 @@ import           Snap
 import           Network.OAuth2.OAuth2       as OA
 import qualified Snap.Snaplet.OAuth.Google   as G
 import           Snap.Snaplet.OAuth.Handlers as HS
-import           Snap.Snaplet.OAuth.Splices as SP
-import           Snap.Snaplet.OAuth.Utils as UT
+import           Snap.Snaplet.OAuth.Splices  as SP
 import           Snap.Snaplet.OAuth.Types
+import           Snap.Snaplet.OAuth.Utils    as UT
 import qualified Snap.Snaplet.OAuth.Weibo    as W
 
 -------------------------------------------------------

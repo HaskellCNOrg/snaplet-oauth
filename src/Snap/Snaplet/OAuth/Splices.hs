@@ -4,7 +4,7 @@
 module Snap.Snaplet.OAuth.Splices where
 
 import           Snap.Snaplet.OAuth.Utils
-import Text.Templating.Heist
+import           Text.Templating.Heist
 
 ----------------------------------------------------------------------
 --  Splices
