@@ -29,7 +29,7 @@ import           Snap.Snaplet.OAuth.Utils
 data GoogleUser = GoogleUser { gid   :: Text
                              , gname :: Text
                              , glink :: Text
-                             }
+                             } deriving (Show, Eq)
 
 instance FromJSON GoogleUser where
     parseJSON (Object o) = GoogleUser

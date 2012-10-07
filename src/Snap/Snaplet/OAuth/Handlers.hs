@@ -45,7 +45,7 @@ oauthCallbackH key = withOAuthH key fn
                          Just token -> liftIO $ modifyAccessToken token oauth
                          _ -> throw (OAuthException $ "Failed to request Access Token." ++ show key)
                               >> return oauth
-    
+
 
 modifyAccessToken :: AccessToken -> OAuth2 -> IO OAuth2
 modifyAccessToken (AccessToken at) origin = return $ origin { oauthAccessToken = Just at }

@@ -20,8 +20,8 @@ clean:
 	rm -f ./cabal-dev/packages-7.4.1.conf/snaplet-oauth-*
 
 hlint:
-	hlint src/ test/ --report=$(DIST)/hlint.html
-	find src test example -name '*.hs' | xargs $(STYLE) -i 
+	hlint src/ tests/ --report=$(DIST)/hlint.html
+	find src tests example -name '*.hs' | xargs $(STYLE) -i 
 
 conf:
 	$(CDEV) configure

@@ -24,6 +24,9 @@ import qualified Text.Show.ByteString           as TSB
 intToByteString :: Integer -> BS.ByteString
 intToByteString = toStrickBS' . TSB.show
 
+sToText :: Show s => s -> T.Text
+sToText = T.pack . show
+
 toStrickBS' :: LBS.ByteString -> BS.ByteString
 toStrickBS' = BS.concat . LBS.toChunks
 

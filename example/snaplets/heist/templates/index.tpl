@@ -8,9 +8,9 @@
     </p>
 
     <p>Congrats!  You're logged in as '<loggedInUser/>'</p>
+    <p><rawResponseSplices /></p>
 
     <p><a href="/logout">Logout</a></p>
-    <!-- <p><a href="/oauth/weibo/account">Weibo User Info</a></p> -->
 
   </ifLoggedIn>
 

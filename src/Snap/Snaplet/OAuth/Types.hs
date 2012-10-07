@@ -1,15 +1,15 @@
-{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Snap.Snaplet.OAuth.Types where
 
 import           Data.Lens.Common
 import           Network.OAuth2.OAuth2
 --import           Prelude               hiding ((.))
+import           Data.Hashable            (Hashable (..))
+import           Data.HashMap.Strict      (HashMap)
+import qualified Data.HashMap.Strict      as M
 import           Snap
-import Data.Hashable (Hashable(..))
-import           Data.HashMap.Strict   (HashMap)
-import qualified Data.HashMap.Strict   as M
-import Snap.Snaplet.OAuth.Utils
+import           Snap.Snaplet.OAuth.Utils
 
 ----------------------------------------------------------------------
 -- Snaplet

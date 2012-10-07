@@ -21,8 +21,6 @@ import           Text.Templating.Heist
 
 
 import qualified Snap.Snaplet.OAuth.Google           as G
-import           Snap.Snaplet.OAuth.Handlers
-import           Snap.Snaplet.OAuth.Utils
 import qualified Snap.Snaplet.OAuth.Weibo            as W
 
 import           Application
@@ -39,19 +37,20 @@ weiboOauthCallbackH = W.weiboCallbackH
                       where success Nothing = writeBS "No user info found"
                             success (Just usr) = do
                                 with auth $ createOAuthUser $ W.wUidStr usr
-                                writeText $ T.pack $ show usr
+                                --writeText $ T.pack $ show usr
+                                toHome usr
 
 -- | This function is broken since we didnt store token anywhere.
 --
 --testUidH :: AppHandler ()
 --testUidH = W.userIdH W.weiboKey >>= writeText . T.pack . show
 
-getUserId :: Maybe W.WeiboUserId -> AppHandler T.Text
-getUserId Nothing = return "Weibo User ID: Nothing Found" -- FIXME: Exception
-getUserId (Just uid) = return . T.pack . show . W.weiboUserId $ uid
-
-showUserId :: Maybe W.WeiboUserId -> AppHandler ()
-showUserId uid = getUserId uid >>= writeText
+--getUserId :: Maybe W.WeiboUserId -> AppHandler T.Text
+--getUserId Nothing = return "Weibo User ID: Nothing Found" -- FIXME: Exception
+--getUserId (Just uid) = return . T.pack . show . W.weiboUserId $ uid
+--
+--showUserId :: Maybe W.WeiboUserId -> AppHandler ()
+--showUserId uid = getUserId uid >>= writeText
 
 -- | Create new user for Weibo User to local
 --
@@ -75,9 +74,9 @@ googleOauthCallbackH = G.googleCallbackH
                  >>= googleUserId
 
 googleUserId :: Maybe G.GoogleUser -> AppHandler ()
-googleUserId Nothing = toHome
+googleUserId Nothing = redirect "/"
 googleUserId (Just user) = with auth (createOAuthUser (G.gid user))
-                           >> toHome
+                           >> toHome user
 
 ----------------------------------------------------------------------
 --  Routes
@@ -89,7 +88,7 @@ routes = [ ("/oauthCallback", weiboOauthCallbackH)
          , ("/googleCallback", googleOauthCallbackH)
          ]
 
-toHome = redirect "/"
+toHome a = heistLocal (bindRawResponseSplices a) $ render "index"
 
 ----------------------------------------------------------------------
 --
