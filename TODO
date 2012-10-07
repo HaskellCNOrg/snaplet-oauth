@@ -1,6 +1,5 @@
 
-1. Shoule be able to do
-    - allow multiple user login with various OAuth provider, e.g. Weibo/Google
+1. [X] allow multiple user login with various OAuth provider, e.g. Weibo/Google
 
 2. [ ] after login, token expired or lost, what shall do?
     => redirect auth page ?

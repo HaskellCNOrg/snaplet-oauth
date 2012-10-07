@@ -14,6 +14,7 @@ import           Prelude                        hiding ((.))
 import           Snap
 
 import           Snap.Snaplet.OAuth.Types
+import           Snap.Snaplet.OAuth.Utils
 
 ----------------------------------------------------------------------
 
@@ -24,7 +25,6 @@ loginWithOauthH :: HasOAuth b
                -> Maybe BS.ByteString
                -- ^ Maybe extra query parameters,e.g., 'scope' param for google oauth.
                -> Handler b v ()
---loginWithOauthH Nothing _ = oauthNotInitH
 loginWithOauthH key param = withOAuthH key fn
     where extraP (Just x) = "&" `BS.append` x
           extraP Nothing  = ""
@@ -50,9 +50,6 @@ oauthCallbackH key = withOAuthH key fn
 modifyAccessToken :: AccessToken -> OAuth2 -> IO OAuth2
 modifyAccessToken (AccessToken at) origin = return $ origin { oauthAccessToken = Just at }
 
-
-decodedParam' :: MonadSnap m => BS.ByteString -> m BS.ByteString
-decodedParam' p = fromMaybe "" <$> getParam p
 
 accessTokenKey :: BS.ByteString
 accessTokenKey = "code"

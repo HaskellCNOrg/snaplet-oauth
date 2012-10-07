@@ -72,14 +72,3 @@ accountUidUri = sToBS "https://api.weibo.com/2/account/get_uid.json"
 accountShowUri :: BS.ByteString
 accountShowUri = sToBS "https://api.weibo.com/2/users/show.json"
 
-
-{-
-part of user info
-  {
-    "id": 1814581760,
-    "idstr": "1814581760",
-    "screen_name": "HaishengWoo",
-    "name": "HaishengWoo",
-    "url": "http://freizl.github.com/",
-  }
--}

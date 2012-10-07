@@ -1,7 +1,6 @@
 cabal-dev*
 dist
 data/*Key.hs
-example2/**/*Key.hs
 example/src/Keys.hs
 *.o
 *.hi
