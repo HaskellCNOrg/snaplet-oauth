@@ -1,22 +1,28 @@
 
 
-- [![branch-0.5](https://secure.travis-ci.org/HaskellCNOrg/snap-oauth.png?branch=branch/0.5)](http://travis-ci.org/HaskellCNOrg/snap-oauth)
+- [![master](https://secure.travis-ci.org/HaskellCNOrg/snap-oauth.png)](http://travis-ci.org/HaskellCNOrg/snap-oauth)
 
 snaplet-oauth
 =============
 
+support oauth providers
 
-Installation
+  - [weibo](http://weib.com)
+  - [google](https://developers.google.com/accounts/docs/OAuth2WebServer)
+
+Build & Tests
 =============
   
-  1. update keys value in `data` directory
-  2. `make init rebuild`
+  - `make init rebuild`
+  - `make test`
 
-test
+Demo
 =============
 
-  - unit tests: `make test`
-  - demo: `make demo`
+  1. `cd example`
+  2. update `src/Keys.hs.default` and rename to `Keys.hs`
+  3. make clean prev
+
 
 snaplet
 =============
