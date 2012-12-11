@@ -61,7 +61,7 @@ Library
       hashable             >= 1.1.2 && < 1.2,
       http-types           >= 0.7 && < 0.8,
       http-conduit         >= 1.8.3 && < 1.8.4,
-      hoauth2              == 0.2.5
+      hoauth2              >= 0.2.5 && < 0.2.6
 
 
   if impl(ghc >= 6.12.0)
