@@ -26,9 +26,10 @@ import           Snap.Snaplet.OAuth.Internal.Utils
 --  APIs Impl
 ----------------------------------------------------------------------
 
-data GoogleUser = GoogleUser { gid   :: Text
-                             , gname :: Text
-                             , glink :: Text
+data GoogleUser = GoogleUser { gid    :: Text
+                             , gname  :: Text
+                             , glink  :: Text
+                             , gemail :: Text
                              } deriving (Show, Eq)
 
 instance FromJSON GoogleUser where
@@ -36,6 +37,7 @@ instance FromJSON GoogleUser where
                            <$> o .: "id"
                            <*> o .: "name"
                            <*> o .: "link"
+                           <*> o .: "email"
     parseJSON _ = mzero
 
 ----------------------------------------------------------------------

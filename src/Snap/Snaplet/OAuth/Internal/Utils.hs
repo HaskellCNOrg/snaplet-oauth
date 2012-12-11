@@ -5,7 +5,6 @@ module Snap.Snaplet.OAuth.Internal.Utils where
 import           Control.Applicative
 import           Data.Aeson
 import qualified Data.ByteString                as BS
-import qualified Data.ByteString.Char8          as BS8
 import qualified Data.ByteString.Lazy           as LBS
 import           Data.Maybe                     (fromMaybe)
 import qualified Data.Text                      as T
@@ -49,4 +48,4 @@ apiRequestOAuth uri oa = apiRequest $ appendAccessToken uri oa
 apiRequest :: FromJSON a
               => BS.ByteString     -- ^ Full API URL
               -> IO (Maybe a)
-apiRequest = doJSONGetRequest . BS8.unpack
+apiRequest = doJSONGetRequest

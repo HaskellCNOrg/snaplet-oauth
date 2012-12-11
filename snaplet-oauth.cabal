@@ -1,6 +1,6 @@
 
 Name:                snaplet-oauth
-Version:             0.0.5
+Version:             0.0.5.1
 Synopsis:            snaplet-oauth
 Description:         This lib is in Alpha status and APIs are likely to be changed.
 Homepage:            https://github.com/HaskellCNOrg/snaplet-oauth
@@ -57,8 +57,8 @@ Library
       unordered-containers >= 0.2 && < 0.3,
       hashable             >= 1.1.2 && < 1.2,
       http-types           >= 0.7 && < 0.8,
-      http-conduit         >= 1.6 && < 1.7,
-      hoauth2              == 0.2.4
+      http-conduit         >= 1.8.3 && < 1.8.4,
+      hoauth2              == 0.2.5
 
 
   if impl(ghc >= 6.12.0)
