@@ -22,6 +22,7 @@ import           Text.Templating.Heist
 
 import qualified Snap.Snaplet.OAuth.Google           as G
 import qualified Snap.Snaplet.OAuth.Weibo            as W
+import qualified Snap.Snaplet.OAuth.Github           as GH
 
 import           Application
 import           Splices
@@ -68,6 +69,22 @@ googleUserId (Just user) = with auth (createOAuthUser (G.gid user))
                            >> toHome user
 
 ----------------------------------------------------------------------
+--  Github
+----------------------------------------------------------------------
+
+githubOauthCallbackH :: AppHandler ()
+githubOauthCallbackH = GH.githubCallbackH
+                 >>= GH.user
+                 >>= githubUser
+
+githubUser :: Maybe GH.GithubUser -> AppHandler ()
+githubUser Nothing = redirect "/"
+githubUser (Just user) = with auth (createOAuthUser uid)
+                           >> toHome user
+                         where uid = intToText $ GH.gid user
+                               intToText = T.pack . show
+
+----------------------------------------------------------------------
 --  Routes
 ----------------------------------------------------------------------
 
@@ -75,8 +92,13 @@ googleUserId (Just user) = with auth (createOAuthUser (G.gid user))
 routes :: [(ByteString, AppHandler ())]
 routes = [ ("/oauthCallback", weiboOauthCallbackH)
          , ("/googleCallback", googleOauthCallbackH)
+         , ("/githubCallback", githubOauthCallbackH)
          ]
 
+-- | NOTE: when use such way to show callback result,
+--         the url does not change, which can not be invoke twice.
+--         This is quite awkful thing and only for testing purpose.
+-- 
 toHome a = heistLocal (bindRawResponseSplices a) $ render "index"
 
 ----------------------------------------------------------------------

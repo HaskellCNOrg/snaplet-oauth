@@ -1,13 +1,12 @@
 {-# LANGUAGE CPP               #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Snap.Snaplet.OAuth.Weibo
+module Snap.Snaplet.OAuth.Github
        ( routes
-       , loginWithWeiboH
-       , weiboCallbackH
-       , userIdH
-       , accountShowH
-       , module Snap.Snaplet.OAuth.Weibo.Api
+       , loginWithGithubH
+       , githubCallbackH
+       , user
+       , module Snap.Snaplet.OAuth.Github.Api
        ) where
 
 ------------------------------------------------------------------------------
@@ -20,44 +19,33 @@ import           Snap
 
 import           Snap.Snaplet.OAuth.Internal.Handlers
 import           Snap.Snaplet.OAuth.Internal.Types
-import           Snap.Snaplet.OAuth.Weibo.Api
+import           Snap.Snaplet.OAuth.Github.Api
 
 ------------------------------------------------------------------------------
---              Weibo
+--              Github
 ------------------------------------------------------------------------------
 
-loginWithWeiboH :: HasOAuth b => Handler b v ()
-loginWithWeiboH = loginWithOauthH Weibo Nothing
+loginWithGithubH :: HasOAuth b => Handler b v ()
+loginWithGithubH = loginWithOauthH Github Nothing
 
 
 -- | token access callback.
 --   return a @OAuthValue@ having access token has been filled.
 --
-weiboCallbackH :: HasOAuth b => Handler b v OAuthValue
-weiboCallbackH = oauthCallbackH Weibo
+githubCallbackH :: HasOAuth b => Handler b v OAuthValue
+githubCallbackH = oauthCallbackH Github
 
--- | userID is must for access other datas.
+-- | user
 --
-userIdH :: HasOAuth b => OAuthValue -> Handler b v (Maybe WeiboUserId)
-userIdH = liftIO . requestUid
-
--- | Show Account detail info.
---
-accountShowH :: HasOAuth b
-                => (Maybe WeiboUser -> Handler b v ())
-                -> OAuthValue
-                -> Handler b v ()
-accountShowH fn oauth =
-    userIdH oauth >>= maybe failure success
-    where success uid = liftIO (requestAccount oauth uid) >>= fn
-          failure = writeBS "Failed at getting UID."
+user :: HasOAuth b => OAuthValue -> Handler b v (Maybe GithubUser)
+user = liftIO . apiUser
 
 
 ------------------------------------------------------------------------------
 
 -- | The application's routes.
 routes :: HasOAuth b => [(ByteString, Handler b v ())]
-routes  = [ ("/weibo" , loginWithWeiboH)
+routes  = [ ("/github" , loginWithGithubH)
           ]
 
 

@@ -14,5 +14,8 @@
   <li>
     <a href="/oauth/google">Login with Google</a>
   </li>
+  <li>
+    <a href="/oauth/github">Login with Github</a>
+  </li>
 </ul>
 

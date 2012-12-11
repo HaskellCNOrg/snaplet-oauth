@@ -29,15 +29,18 @@ Library
   Hs-Source-Dirs: src
   Exposed-modules:     
       Snap.Snaplet.OAuth
+      -- TODO hide internal???
+      Snap.Snaplet.OAuth.Weibo
+      Snap.Snaplet.OAuth.Google
+      Snap.Snaplet.OAuth.Github
+
+  Other-Modules:
       Snap.Snaplet.OAuth.Internal.Types
       Snap.Snaplet.OAuth.Internal.Handlers
       Snap.Snaplet.OAuth.Internal.Utils
-      Snap.Snaplet.OAuth.Weibo
-      Snap.Snaplet.OAuth.Google
-
-  Other-Modules:
       Snap.Snaplet.OAuth.Weibo.Api
       Snap.Snaplet.OAuth.Google.Api
+      Snap.Snaplet.OAuth.Github.Api
 
   Build-Depends:    
       base                 >= 4     && < 5,

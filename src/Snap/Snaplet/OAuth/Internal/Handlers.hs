@@ -35,7 +35,7 @@ loginWithOauthH key param = withOAuthH key fn
 --
 oauthCallbackH :: HasOAuth b
                   => OAuthKey
-                  -> Handler b v OAuth2
+                  -> Handler b v OAuthValue
 oauthCallbackH key = withOAuthH key fn
     where fn oauth = do
                      codeParam  <- decodedParam accessTokenKey
@@ -55,6 +55,8 @@ accessTokenKey = "code"
 
 ----------------------------------------------------------------------
 
+-- | Perform an action with a full initilized @OAuth2@.
+-- 
 withOAuthH :: HasOAuth b
               => OAuthKey
               -> (OAuthValue -> Handler b v a)

@@ -18,8 +18,8 @@ import           Data.Aeson
 import qualified Data.ByteString                   as BS
 import           Data.Text                         (Text)
 
-import           Network.OAuth2.OAuth2
 import           Snap.Snaplet.OAuth.Internal.Utils
+import           Snap.Snaplet.OAuth.Internal.Types
 
 
 ----------------------------------------------------------------------
@@ -45,7 +45,7 @@ instance FromJSON GoogleUser where
 ----------------------------------------------------------------------
 
 
-userInfo :: OAuth2 -> IO (Maybe GoogleUser)
+userInfo :: OAuthValue -> IO (Maybe GoogleUser)
 userInfo = apiRequestOAuth uriUserInfor
 
 

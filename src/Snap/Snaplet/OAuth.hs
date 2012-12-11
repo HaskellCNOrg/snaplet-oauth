@@ -12,6 +12,7 @@ import           Snap
 
 import           Network.OAuth2.OAuth2                as OA
 import qualified Snap.Snaplet.OAuth.Google            as G
+import qualified Snap.Snaplet.OAuth.Github            as GH
 import           Snap.Snaplet.OAuth.Internal.Handlers as HS
 import           Snap.Snaplet.OAuth.Internal.Types    as TY
 import           Snap.Snaplet.OAuth.Internal.Utils    as UT
@@ -39,3 +40,5 @@ routes :: HasOAuth b => [(ByteString, Handler b v ())]
 routes = W.routes
          <|>
          G.routes
+         <|>
+         GH.routes

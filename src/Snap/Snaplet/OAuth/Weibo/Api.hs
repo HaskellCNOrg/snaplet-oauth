@@ -7,10 +7,12 @@ import           Data.Aeson
 import qualified Data.ByteString                   as BS
 import           Data.Maybe                        (fromMaybe)
 import           Data.Text                         (Text)
-import qualified Network.HTTP.Types                as HT
-import           Network.OAuth2.OAuth2
+--import qualified Network.HTTP.Types                as HT
+import           Network.OAuth2.HTTP.HttpClient
+import Network.OAuth2.OAuth2
 import           Snap
 import           Snap.Snaplet.OAuth.Internal.Utils
+import           Snap.Snaplet.OAuth.Internal.Types
 
 ----------------------------------------------------------------------
 --  Weibo User ID
@@ -46,16 +48,15 @@ instance FromJSON WeiboUser where
 
 -- | User ID
 --
-requestUid :: OAuth2 -> IO (Maybe WeiboUserId)
+requestUid :: OAuthValue -> IO (Maybe WeiboUserId)
 requestUid = apiRequestOAuth accountUidUri
 
 
 -- | User Info
 --
-requestAccount :: OAuth2 -> WeiboUserId -> IO (Maybe WeiboUser)
-requestAccount oa uid = apiRequest uri
-    where uri = accountShowUri `BS.append` query
-          query = HT.renderSimpleQuery True params
+requestAccount :: OAuthValue -> WeiboUserId -> IO (Maybe WeiboUser)
+requestAccount oa uid = doJSONGetRequest uri
+    where uri = appendQueryParam accountShowUri params
           params = accessTokenToParam token ++ uidToParam uid
           token = fromMaybe "" (oauthAccessToken oa)
 

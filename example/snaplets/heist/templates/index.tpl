@@ -10,6 +10,7 @@
     <p>Congrats!  You're logged in as '<loggedInUser/>'</p>
     <p><rawResponseSplices /></p>
 
+    <p><a href="/">Home</a></p>
     <p><a href="/logout">Logout</a></p>
 
   </ifLoggedIn>

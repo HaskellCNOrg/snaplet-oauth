@@ -43,9 +43,4 @@ apiRequestOAuth :: FromJSON a
               => BS.ByteString     -- ^ API URL
               -> OAuth2            -- ^ For append access token
               -> IO (Maybe a)
-apiRequestOAuth uri oa = apiRequest $ appendAccessToken uri oa
-
-apiRequest :: FromJSON a
-              => BS.ByteString     -- ^ Full API URL
-              -> IO (Maybe a)
-apiRequest = doJSONGetRequest
+apiRequestOAuth uri oa = doJSONGetRequest $ appendAccessToken uri oa
