@@ -23,7 +23,7 @@ import           Snap.Snaplet.OAuth.Internal.Types
 data WeiboUserId = WeiboUserId { weiboUserId :: Integer } deriving (Show, Eq)
 
 data WeiboUser = WeiboUser { wUidStr      :: Text
-                           , wScreenNname :: Text
+                           , wScreenName  :: Text
                            , wName        :: Text
                            , wUrl         :: Text
                            } deriving (Show)
