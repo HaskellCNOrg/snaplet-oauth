@@ -7,8 +7,8 @@ import           Snap.Snaplet.OAuth
 ----------------------------------------------------------------------
 
 keys :: [(OAuthKey, OAuthValue)]
-keys  = [ (Weibo, weiboKey)
-        , (Google, googleKey)
+keys  = [ (weibo, weiboKey)
+        , (google, googleKey)
         ]
 
 ----------------------------------------------------------------------

@@ -27,14 +27,14 @@ import           Snap.Snaplet.OAuth.Weibo.Api
 ------------------------------------------------------------------------------
 
 loginWithWeiboH :: HasOAuth b => Handler b v ()
-loginWithWeiboH = loginWithOauthH Weibo Nothing
+loginWithWeiboH = loginWithOauthH weibo Nothing
 
 
 -- | token access callback.
 --   return a @OAuthValue@ having access token has been filled.
 --
 weiboCallbackH :: HasOAuth b => Handler b v OAuthValue
-weiboCallbackH = oauthCallbackH Weibo
+weiboCallbackH = oauthCallbackH weibo
 
 -- | userID is must for access other datas.
 --

@@ -1,8 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
 module Snap.Snaplet.OAuth.Internal.Types where
 
 import           Data.Lens.Common
+import Data.Text (Text)
 import           Network.OAuth2.OAuth2
 --import           Prelude               hiding ((.))
 import           Data.Hashable                     (Hashable (..))
@@ -54,10 +56,15 @@ lookupOAuth name = do
 
 newtype OAuthMap = OAuthMap (HashMap OAuthKey OAuthValue)
 
+newtype OAuthKey = OAuthKey { unkey :: String }
+                   deriving (Hashable, Eq)
+
 type OAuthValue = OAuth2
 
-data OAuthKey = Google | Github | Twitter | Facebook | Weibo | QQ
-                deriving (Show, Eq, Enum)
+google, github, weibo :: OAuthKey
+google = OAuthKey "google"
+github = OAuthKey "github"
+weibo = OAuthKey "weibo"
 
-instance Hashable OAuthKey where
-  hash = hash . sToBS . show
+instance Show OAuthKey where
+  show = unkey

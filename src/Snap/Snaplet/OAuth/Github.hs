@@ -26,14 +26,14 @@ import           Snap.Snaplet.OAuth.Github.Api
 ------------------------------------------------------------------------------
 
 loginWithGithubH :: HasOAuth b => Handler b v ()
-loginWithGithubH = loginWithOauthH Github Nothing
+loginWithGithubH = loginWithOauthH github Nothing
 
 
 -- | token access callback.
 --   return a @OAuthValue@ having access token has been filled.
 --
 githubCallbackH :: HasOAuth b => Handler b v OAuthValue
-githubCallbackH = oauthCallbackH Github
+githubCallbackH = oauthCallbackH github
 
 -- | user
 --

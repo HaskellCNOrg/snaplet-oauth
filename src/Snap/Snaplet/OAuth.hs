@@ -29,7 +29,7 @@ initOauthSnaplet :: HasOAuth b
                     -- ^ Oauth Keys
                     -> SnapletInit b OAuthSnaplet
 initOauthSnaplet rt oauths =
-    makeSnaplet "OAuthSnaplet" "" Nothing $ do
+    makeSnaplet "OAuth" "Snaplet - OAuth Client" Nothing $ do
         when rt (addRoutes routes)
         return $ emptyOAuthSnaplet { oauthKeys = oauths }
 

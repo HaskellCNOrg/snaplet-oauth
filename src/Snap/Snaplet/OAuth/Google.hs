@@ -30,7 +30,7 @@ import           Snap.Snaplet.OAuth.Internal.Types
 
 -- |
 loginWithGoogleH :: HasOAuth b => Handler b v ()
-loginWithGoogleH = loginWithOauthH Google scopeParam
+loginWithGoogleH = loginWithOauthH google scopeParam
                    where scopeParam = Just $ renderSimpleQuery False scopeQuery
                          scopeQuery = [(googleScopeKey, BS.intercalate " " scopes)]
                          -- | multiple scope in order to get email info
@@ -38,7 +38,7 @@ loginWithGoogleH = loginWithOauthH Google scopeParam
 
 
 googleCallbackH :: HasOAuth b => Handler b v OAuth2
-googleCallbackH = oauthCallbackH Google
+googleCallbackH = oauthCallbackH google
 
 
 userInfoH :: HasOAuth b => OAuth2 -> Handler b v (Maybe GoogleUser)

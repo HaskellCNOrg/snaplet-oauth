@@ -10,8 +10,8 @@ import           Data.Lens.Template
 import           Snap.Snaplet
 import           Snap.Snaplet.Auth
 import           Snap.Snaplet.Heist
-import           Snap.Snaplet.Session
 import           Snap.Snaplet.OAuth
+import           Snap.Snaplet.Session
 
 ------------------------------------------------------------------------------
 data App = App
