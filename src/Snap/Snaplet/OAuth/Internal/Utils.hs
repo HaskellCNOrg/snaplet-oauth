@@ -4,15 +4,15 @@ module Snap.Snaplet.OAuth.Internal.Utils where
 
 import           Control.Applicative
 import           Data.Aeson
-import qualified Data.ByteString                as BS
-import qualified Data.ByteString.Lazy           as LBS
-import           Data.Maybe                     (fromMaybe)
-import qualified Data.Text                      as T
-import qualified Data.Text.Encoding             as T
-import           Network.OAuth2.HTTP.HttpClient
-import           Network.OAuth2.OAuth2
-import           Snap                           hiding (Response)
-import qualified Text.Show.ByteString           as TSB
+import qualified Data.ByteString                 as BS
+import qualified Data.ByteString.Lazy            as LBS
+import           Data.Maybe                      (fromMaybe)
+import qualified Data.Text                       as T
+import qualified Data.Text.Encoding              as T
+import           Network.OAuth.OAuth2
+import           Network.OAuth.OAuth2.HttpClient
+import           Snap                            hiding (Response)
+import qualified Text.Show.ByteString            as TSB
 
 ----------------------------------------------------------------------
 

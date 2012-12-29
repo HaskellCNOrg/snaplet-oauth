@@ -43,25 +43,25 @@ Library
       Snap.Snaplet.OAuth.Github.Api
 
   Build-Depends:    
+      MonadCatchIO-mtl     >= 0.3 && < 0.4,
+      aeson                >= 0.6   && < 0.7,
       base                 >= 4     && < 5,
       bytestring           >= 0.9   && < 1.0,
-      data-lens            >= 2.0.1 && < 2.11,
-      text                 >= 0.11  && < 0.12,
       bytestring-show      >= 0.3.5 && < 0.4,
-      aeson                >= 0.6   && < 0.7,
-      data-lens-template   == 2.1.*,
+      data-lens            >= 2.0   && < 2.1,
+      data-lens-template   >= 2.1   && < 2.2,
       failure              >= 0.1,
+      hashable             >= 1.1.2 && < 1.2,
+      heist                == 0.8.*,
+      hoauth2              >= 0.2.5 && < 0.2.7,
+      http-conduit         >= 1.8.3 && < 1.8.5,
+      http-types           >= 0.7 && < 0.8,
       snap                 == 0.9.*,
       snap-core            == 0.9.*,
       snap-loader-dynamic  == 0.9.*,
       snap-loader-static   == 0.9.*,
-      heist                == 0.8.*,
-      MonadCatchIO-mtl     >= 0.3 && < 0.4,
-      unordered-containers >= 0.2 && < 0.3,
-      hashable             >= 1.1.2 && < 1.2,
-      http-types           >= 0.7 && < 0.8,
-      http-conduit         >= 1.8.3 && < 1.8.4,
-      hoauth2              >= 0.2.5 && < 0.2.6
+      text                 >= 0.11  && < 0.12,
+      unordered-containers >= 0.2 && < 0.3
 
 
   if impl(ghc >= 6.12.0)

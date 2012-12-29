@@ -7,8 +7,8 @@ module Snap.Snaplet.OAuth.Internal.Handlers
 import           Control.Monad.CatchIO             (throw)
 import qualified Data.ByteString                   as BS
 import           Data.Maybe
-import           Network.OAuth2.HTTP.HttpClient
-import           Network.OAuth2.OAuth2
+import           Network.OAuth.OAuth2
+import           Network.OAuth.OAuth2.HttpClient
 import           Prelude                           hiding ((.))
 import           Snap
 

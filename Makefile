@@ -11,7 +11,7 @@ default: build
 
 init:
 	cabal update
-	$(CDEV) install
+	$(CDEV) install --only-dependencies
 
 clean:
 	rm -rf $(DIST)

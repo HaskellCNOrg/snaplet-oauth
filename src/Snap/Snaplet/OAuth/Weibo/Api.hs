@@ -8,8 +8,8 @@ import qualified Data.ByteString                   as BS
 import           Data.Maybe                        (fromMaybe)
 import           Data.Text                         (Text)
 --import qualified Network.HTTP.Types                as HT
-import           Network.OAuth2.HTTP.HttpClient
-import           Network.OAuth2.OAuth2
+import           Network.OAuth.OAuth2
+import           Network.OAuth.OAuth2.HttpClient
 import           Snap
 import           Snap.Snaplet.OAuth.Internal.Types
 import           Snap.Snaplet.OAuth.Internal.Utils
@@ -73,4 +73,3 @@ accountUidUri = sToBS "https://api.weibo.com/2/account/get_uid.json"
 
 accountShowUri :: BS.ByteString
 accountShowUri = sToBS "https://api.weibo.com/2/users/show.json"
-

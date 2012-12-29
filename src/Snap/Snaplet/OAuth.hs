@@ -11,7 +11,7 @@ import           Data.ByteString                      (ByteString)
 import           Data.HashMap.Strict                  (member)
 import           Snap
 
-import           Network.OAuth2.OAuth2                as OA
+import           Network.OAuth.OAuth2                 as OA
 import qualified Snap.Snaplet.OAuth.Github            as GH
 import qualified Snap.Snaplet.OAuth.Google            as G
 import           Snap.Snaplet.OAuth.Internal.Handlers as HS

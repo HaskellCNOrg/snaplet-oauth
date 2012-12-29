@@ -3,11 +3,11 @@
 
 module Snap.Snaplet.OAuth.Internal.Types where
 
-import           Data.Hashable         (Hashable (..))
-import           Data.HashMap.Strict   (HashMap)
-import qualified Data.HashMap.Strict   as M
+import           Data.Hashable        (Hashable (..))
+import           Data.HashMap.Strict  (HashMap)
+import qualified Data.HashMap.Strict  as M
 import           Data.Lens.Common
-import           Network.OAuth2.OAuth2
+import           Network.OAuth.OAuth2
 import           Snap
 
 ----------------------------------------------------------------------
