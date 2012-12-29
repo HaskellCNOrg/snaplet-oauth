@@ -3,10 +3,10 @@
 
 module Snap.Snaplet.OAuth.Weibo
        ( routes
-       , loginWithWeiboH
+       , weiboLoginH
        , weiboCallbackH
-       , userIdH
-       , accountShowH
+       , weiboUserIdH
+       , weiboUserH
        , module Snap.Snaplet.OAuth.Weibo.Api
        ) where
 
@@ -26,8 +26,8 @@ import           Snap.Snaplet.OAuth.Weibo.Api
 --              Weibo
 ------------------------------------------------------------------------------
 
-loginWithWeiboH :: HasOAuth b => Handler b v ()
-loginWithWeiboH = loginWithOauthH weibo Nothing
+weiboLoginH :: HasOAuth b => Handler b v ()
+weiboLoginH = loginWithOauthH weibo Nothing
 
 
 -- | token access callback.
@@ -38,26 +38,38 @@ weiboCallbackH = oauthCallbackH weibo
 
 -- | userID is must for access other datas.
 --
-userIdH :: HasOAuth b => OAuthValue -> Handler b v (Maybe WeiboUserId)
-userIdH = liftIO . requestUid
+weiboUserIdH :: HasOAuth b => Handler b v (OAuthValue, (Maybe WeiboUserId))
+weiboUserIdH = do
+               oauth <- weiboCallbackH
+               uid <- liftIO $ requestUid oauth
+               return (oauth, uid)
+
+
+-- | fetch weibo user info.
+--
+weiboUserH :: HasOAuth b => Handler b v (Maybe WeiboUser)
+weiboUserH = do
+  (oauth, uid) <- weiboUserIdH
+  maybe failure (liftIO . requestAccount oauth) uid
+    where failure = return Nothing
 
 -- | Show Account detail info.
 --
-accountShowH :: HasOAuth b
-                => (Maybe WeiboUser -> Handler b v ())
-                -> OAuthValue
-                -> Handler b v ()
-accountShowH fn oauth =
-    userIdH oauth >>= maybe failure success
-    where success uid = liftIO (requestAccount oauth uid) >>= fn
-          failure = writeBS "Failed at getting UID."
+-- accountShowH :: HasOAuth b
+--                 => (Maybe WeiboUser -> Handler b v ())
+--                 -> OAuthValue
+--                 -> Handler b v ()
+-- accountShowH fn oauth =
+--     userIdH oauth >>= maybe failure success
+--     where success uid = liftIO (requestAccount oauth uid) >>= fn
+--           failure = writeBS "Failed at getting UID."
 
 
 ------------------------------------------------------------------------------
 
 -- | The application's routes.
 routes :: HasOAuth b => [(ByteString, Handler b v ())]
-routes  = [ ("/weibo" , loginWithWeiboH)
+routes  = [ ("/weibo" , weiboLoginH)
           ]
 
 

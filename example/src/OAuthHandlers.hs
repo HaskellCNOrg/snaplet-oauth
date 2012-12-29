@@ -34,8 +34,8 @@ import           Splices
 
 -- | Logs out and redirects the user to the site index.
 weiboOauthCallbackH :: AppHandler ()
-weiboOauthCallbackH = W.weiboCallbackH
-                      >>= W.accountShowH success
+weiboOauthCallbackH = W.weiboUserH
+                      >>= success
                       where success Nothing = writeBS "No user info found"
                             success (Just usr) = do
                                 with auth $ createOAuthUser weibo $ W.wUidStr usr
@@ -48,8 +48,7 @@ weiboOauthCallbackH = W.weiboCallbackH
 ----------------------------------------------------------------------
 
 googleOauthCallbackH :: AppHandler ()
-googleOauthCallbackH = G.googleCallbackH
-                 >>= G.userInfoH
+googleOauthCallbackH = G.googleUserH
                  >>= googleUserId
 
 googleUserId :: Maybe G.GoogleUser -> AppHandler ()
@@ -62,8 +61,7 @@ googleUserId (Just user) = with auth (createOAuthUser google (G.gid user))
 ----------------------------------------------------------------------
 
 githubOauthCallbackH :: AppHandler ()
-githubOauthCallbackH = GH.githubCallbackH
-                 >>= GH.user
+githubOauthCallbackH = GH.githubUserH
                  >>= githubUser
 
 githubUser :: Maybe GH.GithubUser -> AppHandler ()

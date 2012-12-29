@@ -3,9 +3,9 @@
 
 module Snap.Snaplet.OAuth.Github
        ( routes
-       , loginWithGithubH
+       , githubLoginH
        , githubCallbackH
-       , user
+       , githubUserH
        , module Snap.Snaplet.OAuth.Github.Api
        ) where
 
@@ -25,8 +25,8 @@ import           Snap.Snaplet.OAuth.Github.Api
 --              Github
 ------------------------------------------------------------------------------
 
-loginWithGithubH :: HasOAuth b => Handler b v ()
-loginWithGithubH = loginWithOauthH github Nothing
+githubLoginH :: HasOAuth b => Handler b v ()
+githubLoginH = loginWithOauthH github Nothing
 
 
 -- | token access callback.
@@ -37,16 +37,19 @@ githubCallbackH = oauthCallbackH github
 
 -- | user
 --
-user :: HasOAuth b => OAuthValue -> Handler b v (Maybe GithubUser)
-user = liftIO . apiUser
+githubUserH :: HasOAuth b => Handler b v (Maybe GithubUser)
+githubUserH = githubCallbackH
+              >>= liftIO . apiUser
 
 
 ------------------------------------------------------------------------------
 
 -- | The application's routes.
+--
 routes :: HasOAuth b => [(ByteString, Handler b v ())]
-routes  = [ ("/github" , loginWithGithubH)
+routes  = [ ("/github" , githubLoginH)
           ]
+          -- where the callback handler is suppose to be added by user.
 
 
 ----------------------------------------------------------------------------

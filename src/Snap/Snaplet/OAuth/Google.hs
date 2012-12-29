@@ -4,9 +4,9 @@
 
 module Snap.Snaplet.OAuth.Google
        ( routes
-       , loginWithGoogleH
+       , googleLoginH
        , googleCallbackH
-       , userInfoH
+       , googleUserH
        , module Snap.Snaplet.OAuth.Google.Api
        ) where
 
@@ -19,7 +19,6 @@ import           Network.HTTP.Types                   (renderSimpleQuery)
 import           Prelude                              hiding ((.))
 import           Snap
 
-import           Network.OAuth2.OAuth2
 import           Snap.Snaplet.OAuth.Google.Api
 import           Snap.Snaplet.OAuth.Internal.Handlers
 import           Snap.Snaplet.OAuth.Internal.Types
@@ -29,25 +28,26 @@ import           Snap.Snaplet.OAuth.Internal.Types
 ------------------------------------------------------------------------------
 
 -- |
-loginWithGoogleH :: HasOAuth b => Handler b v ()
-loginWithGoogleH = loginWithOauthH google scopeParam
-                   where scopeParam = Just $ renderSimpleQuery False scopeQuery
-                         scopeQuery = [(googleScopeKey, BS.intercalate " " scopes)]
-                         -- | multiple scope in order to get email info
-                         scopes = [googleScopeEmail, googleScopeUserInfo]
+googleLoginH :: HasOAuth b => Handler b v ()
+googleLoginH = loginWithOauthH google scopeParam
+  where scopeParam = Just $ renderSimpleQuery False scopeQuery
+        scopeQuery = [(googleScopeKey, BS.intercalate " " scopes)]
+        -- | multiple scope in order to get email info
+        scopes = [googleScopeEmail, googleScopeUserInfo]
 
 
-googleCallbackH :: HasOAuth b => Handler b v OAuth2
+googleCallbackH :: HasOAuth b => Handler b v OAuthValue
 googleCallbackH = oauthCallbackH google
 
 
-userInfoH :: HasOAuth b => OAuth2 -> Handler b v (Maybe GoogleUser)
-userInfoH = liftIO . userInfo
+googleUserH :: HasOAuth b => Handler b v (Maybe GoogleUser)
+googleUserH = googleCallbackH
+              >>= liftIO . userInfo
 
 ------------------------------------------------------------------------------
 
 -- | The application's routes.
 --
 routes :: HasOAuth b => [(ByteString, Handler b v ())]
-routes  = [ ("/google", loginWithGoogleH)
+routes  = [ ("/google", googleLoginH)
           ]
