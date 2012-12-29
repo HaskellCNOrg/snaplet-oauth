@@ -9,10 +9,10 @@ import           Data.Maybe                        (fromMaybe)
 import           Data.Text                         (Text)
 --import qualified Network.HTTP.Types                as HT
 import           Network.OAuth2.HTTP.HttpClient
-import Network.OAuth2.OAuth2
+import           Network.OAuth2.OAuth2
 import           Snap
-import           Snap.Snaplet.OAuth.Internal.Utils
 import           Snap.Snaplet.OAuth.Internal.Types
+import           Snap.Snaplet.OAuth.Internal.Utils
 
 ----------------------------------------------------------------------
 --  Weibo User ID
@@ -22,10 +22,10 @@ import           Snap.Snaplet.OAuth.Internal.Types
 --   FIXME: chinese name doest display correctly
 data WeiboUserId = WeiboUserId { weiboUserId :: Integer } deriving (Show, Eq)
 
-data WeiboUser = WeiboUser { wUidStr      :: Text
-                           , wScreenName  :: Text
-                           , wName        :: Text
-                           , wUrl         :: Text
+data WeiboUser = WeiboUser { wUidStr     :: Text
+                           , wScreenName :: Text
+                           , wName       :: Text
+                           , wUrl        :: Text
                            } deriving (Show)
 -- | Parse UID response
 --

@@ -94,7 +94,6 @@ app = makeSnaplet "app" "An snaplet example application." Nothing $ do
     -- NOTE: if defined as:
     --       oa <- nestSnaplet "oauth" oauth $ initOauthSnaplet
     -- the url becomes /oauth/weibo
-    --                 /oauth/oauthCallback
     --
     oa <- nestSnaplet "oauth" oauth $ initOauthSnaplet True oauthkeys
     addRoutes routes

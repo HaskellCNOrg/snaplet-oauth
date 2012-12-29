@@ -18,8 +18,8 @@ import           Data.Aeson
 import qualified Data.ByteString                   as BS
 import           Data.Text                         (Text)
 
-import           Snap.Snaplet.OAuth.Internal.Utils
 import           Snap.Snaplet.OAuth.Internal.Types
+import           Snap.Snaplet.OAuth.Internal.Utils
 
 
 ----------------------------------------------------------------------

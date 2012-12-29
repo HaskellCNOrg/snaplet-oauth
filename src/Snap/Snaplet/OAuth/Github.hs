@@ -17,9 +17,9 @@ import           Data.Maybe
 import           Prelude                              hiding ((.))
 import           Snap
 
+import           Snap.Snaplet.OAuth.Github.Api
 import           Snap.Snaplet.OAuth.Internal.Handlers
 import           Snap.Snaplet.OAuth.Internal.Types
-import           Snap.Snaplet.OAuth.Github.Api
 
 ------------------------------------------------------------------------------
 --              Github

@@ -38,7 +38,7 @@ weiboCallbackH = oauthCallbackH weibo
 
 -- | userID is must for access other datas.
 --
-weiboUserIdH :: HasOAuth b => Handler b v (OAuthValue, (Maybe WeiboUserId))
+weiboUserIdH :: HasOAuth b => Handler b v (OAuthValue, Maybe WeiboUserId)
 weiboUserIdH = do
                oauth <- weiboCallbackH
                uid <- liftIO $ requestUid oauth

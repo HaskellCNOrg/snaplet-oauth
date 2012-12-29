@@ -56,7 +56,7 @@ accessTokenKey = "code"
 ----------------------------------------------------------------------
 
 -- | Perform an action with a full initilized @OAuth2@.
--- 
+--
 withOAuthH :: HasOAuth b
               => OAuthKey
               -> (OAuthValue -> Handler b v a)

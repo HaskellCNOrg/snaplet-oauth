@@ -21,7 +21,7 @@ clean:
 
 hlint:
 	hlint src/ tests/ --report=$(DIST)/hlint.html
-	find src tests example -name '*.hs' | xargs $(STYLE) -i 
+	find src tests example -name '*.hs' | xargs $(STYLE) -i
 
 conf:
 	$(CDEV) configure --enable-tests
@@ -40,7 +40,7 @@ test: build
 	$(CDEV) test
 
 demo:
-	cd example && make clean prev
+	cd example && make clean p
 
 doc:
 	$(CDEV) haddock
@@ -64,5 +64,5 @@ local:
 	$(CDEV) add-source ../hoauth2
 	$(CDEV) install
 
-## 
+##
 ## cd example/ && runghc -package-conf=../cabal-dev/packages-7.4.1.conf/ snap.hs -b 127.0.0.1 -p 9988

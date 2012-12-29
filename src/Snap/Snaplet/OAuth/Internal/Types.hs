@@ -1,17 +1,14 @@
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE OverloadedStrings          #-}
 
 module Snap.Snaplet.OAuth.Internal.Types where
 
+import           Data.Hashable         (Hashable (..))
+import           Data.HashMap.Strict   (HashMap)
+import qualified Data.HashMap.Strict   as M
 import           Data.Lens.Common
-import Data.Text (Text)
 import           Network.OAuth2.OAuth2
---import           Prelude               hiding ((.))
-import           Data.Hashable                     (Hashable (..))
-import           Data.HashMap.Strict               (HashMap)
-import qualified Data.HashMap.Strict               as M
 import           Snap
-import           Snap.Snaplet.OAuth.Internal.Utils
 
 ----------------------------------------------------------------------
 -- Snaplet
