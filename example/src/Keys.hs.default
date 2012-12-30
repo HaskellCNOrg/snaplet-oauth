@@ -6,9 +6,9 @@ import           Snap.Snaplet.OAuth
 
 ----------------------------------------------------------------------
 
-keys :: [(OAuthKey, OAuthValue)]
 keys  = [ (weibo, weiboKey)
         , (google, googleKey)
+        , (github, githubKey)
         ]
 
 ----------------------------------------------------------------------
@@ -30,3 +30,5 @@ weiboKey = OAuth2 { oauthClientId = ""
                    , oauthAccessTokenEndpoint = "https://api.weibo.com/oauth2/access_token"
                    , oauthAccessToken = Nothing
                    }
+githubKey :: OAuth2
+githubKey = undefined

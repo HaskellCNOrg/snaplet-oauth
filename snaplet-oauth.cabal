@@ -14,14 +14,28 @@ Build-type:          Simple
 stability:           alpha
 Cabal-version:       >=1.10
 
+
+-- Extra files to be distributed with the package, such as examples or
+-- a README.
+Extra-source-files:  
+  README.md
+  Makefile
+  tests/Weibo.hs
+  example/example.cabal
+  example/Makefile
+  example/snaplets/heist/templates/*.tpl
+  example/src/Splices.hs
+  example/src/Site.hs
+  example/src/OAuthHandlers.hs
+  example/src/Main.hs
+  example/src/Application.hs
+  example/src/Keys.hs.default
+  example/static/*.css
+
 Source-Repository head
   Type:     git
   Location: git://github.com/HaskellCNOrg/snaplet-oauth.git
 
-
--- Extra files to be distributed with the package, such as examples or
--- a README.
--- Extra-source-files:  
 
 
 Library
@@ -29,7 +43,6 @@ Library
   Hs-Source-Dirs: src
   Exposed-modules:     
       Snap.Snaplet.OAuth
-      -- TODO hide internal???
       Snap.Snaplet.OAuth.Weibo
       Snap.Snaplet.OAuth.Google
       Snap.Snaplet.OAuth.Github
