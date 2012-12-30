@@ -2,11 +2,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Snap.Snaplet.OAuth.Weibo
-       ( routes
+       ( -- * Routes
+         routes
+         -- * Handlers
        , weiboLoginH
        , weiboCallbackH
        , weiboUserIdH
        , weiboUserH
+         -- * Types and API
        , module Snap.Snaplet.OAuth.Weibo.Api
        ) where
 
@@ -52,17 +55,6 @@ weiboUserH = do
   (oauth, uid) <- weiboUserIdH
   maybe failure (liftIO . requestAccount oauth) uid
     where failure = return Nothing
-
--- | Show Account detail info.
---
--- accountShowH :: HasOAuth b
---                 => (Maybe WeiboUser -> Handler b v ())
---                 -> OAuthValue
---                 -> Handler b v ()
--- accountShowH fn oauth =
---     userIdH oauth >>= maybe failure success
---     where success uid = liftIO (requestAccount oauth uid) >>= fn
---           failure = writeBS "Failed at getting UID."
 
 
 ------------------------------------------------------------------------------

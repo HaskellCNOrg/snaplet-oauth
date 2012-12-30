@@ -3,10 +3,14 @@
 {-# LANGUAGE RankNTypes        #-}
 
 module Snap.Snaplet.OAuth.Google
-       ( routes
+       (
+         -- * Routes
+         routes
+         -- * Handlers
        , googleLoginH
        , googleCallbackH
        , googleUserH
+         -- * Types and API
        , module Snap.Snaplet.OAuth.Google.Api
        ) where
 

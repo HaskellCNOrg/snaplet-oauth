@@ -2,10 +2,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Snap.Snaplet.OAuth.Github
-       ( routes
+       (
+         -- * Routes
+         routes
+         -- * Handlers
        , githubLoginH
        , githubCallbackH
        , githubUserH
+         -- * Types and API
        , module Snap.Snaplet.OAuth.Github.Api
        ) where
 
@@ -35,11 +39,11 @@ githubLoginH = loginWithOauthH github Nothing
 githubCallbackH :: HasOAuth b => Handler b v OAuthValue
 githubCallbackH = oauthCallbackH github
 
--- | user
+-- | token access callback
+-- return a @Maybe@ @GithubUser@ if everything goes well otherwise @Nothing@.
 --
 githubUserH :: HasOAuth b => Handler b v (Maybe GithubUser)
-githubUserH = githubCallbackH
-              >>= liftIO . apiUser
+githubUserH = githubCallbackH >>= liftIO . apiUser
 
 
 ------------------------------------------------------------------------------
