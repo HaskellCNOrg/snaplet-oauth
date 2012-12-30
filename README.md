@@ -1,15 +1,18 @@
 
 
 - master: [![master](https://secure.travis-ci.org/HaskellCNOrg/snaplet-oauth.png?branch=master)](http://travis-ci.org/HaskellCNOrg/snap-oauth)
-- branch/0.5: [![branch/0.5](https://secure.travis-ci.org/HaskellCNOrg/snaplet-oauth.png?branch=branch/0.5)](http://travis-ci.org/HaskellCNOrg/snap-oauth)
+- branch/0.0.6: [![Build Status](https://travis-ci.org/HaskellCNOrg/snaplet-oauth.png?branch=branch/0.0.6)](https://travis-ci.org/HaskellCNOrg/snaplet-oauth)
 
 snaplet-oauth
 =============
+
+oauth client snaplet
 
 support oauth providers
 
   - [weibo](http://weib.com)
   - [google](https://developers.google.com/accounts/docs/OAuth2WebServer)
+  - github
 
 Build & Tests
 =============

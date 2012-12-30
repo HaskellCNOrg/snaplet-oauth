@@ -53,7 +53,7 @@ Library
       failure              >= 0.1,
       hashable             >= 1.1.2 && < 1.2,
       heist                == 0.8.*,
-      hoauth2              >= 0.2.5 && < 0.2.7,
+      hoauth2              >= 0.2.6 && < 0.2.7,
       http-conduit         >= 1.8.3 && < 1.8.5,
       http-types           >= 0.7 && < 0.8,
       snap                 == 0.9.*,
